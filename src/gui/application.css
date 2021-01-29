@@ -1,0 +1,57 @@
+/* JavaFX CSS - Leave this comment until you have at least create one rule which uses -fx-Property */
+#root {
+    -fx-padding: 3em 4em;
+}
+
+.headingText {
+    -fx-font-size: 15;
+    -fx-text-fill: #707070;
+}
+
+#convertControls {
+    -fx-padding: 1em;
+}
+
+#convertBttnContainer {
+    -fx-alignment: center;
+    -fx-padding: 1em;
+    -fx-spacing: 20px;
+}
+
+.largeBttn {
+    -fx-padding:  6px 12px;
+}
+
+#fileDropZoneSmall {
+    -fx-border-width: 2px;
+    -fx-border-color: "#707070";
+    -fx-border-style: dashed;
+    -fx-padding: 2em;
+    -fx-min-width: 300;
+    -fx-max-width: 300;
+}
+
+#fileDropZoneLarge {
+    -fx-border-width: 1px;
+    -fx-border-color: "#707070";
+    -fx-border-style: solid;
+    -fx-padding: 1em;
+    -fx-min-width: 300;
+    -fx-max-width: 500;
+    -fx-pref-height: 80%;
+}
+
+.tab-pane {
+    -fx-min-width: 450;
+    -fx-max-width: 800;
+    -fx-min-height: 350;
+}
+
+.tab-content-area {
+    -fx-background-color: white;
+    -fx-border-width: 1.5px;
+}
+
+.tab-header-background {
+    -fx-background-color: transparent;
+}
