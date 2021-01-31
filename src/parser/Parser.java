@@ -5,14 +5,14 @@ import java.util.List;
 import java.util.regex.*;
 
 public class Parser {
-    public static final String instructionPattern = "[^\\s\\S]";   //the regex pattern that finds instructions
+    public static final String instructionPattern = "[^\\s\\S]";   // TODO the regex pattern that finds instructions. This pattern is just a dummy and should not affect the
     public static final String commentPattern = "(\\n#[^\\n]+)";   //the pattern group that finds comments
 
 
     //the regex pattern that finds measure groups.
     //                                                          start of string or new line  Any whitespace that's not a new line(0 or more)  1-3 alphabets and optional whitespace      one or more "|" and any length of characters(excluding newlines).       match one or more of everything I just mentioned.
     //                                                                      |                            |                                            |                                                     |                                                              |
-    public static final String measureGroupPattern = "(" +              "(^|[\\n])"      +         "[^\\S\\r\\n]*"              +          "[a-zA-Z]{1,3}[^\\S\\r\\n]*"           +               "\\|+[^\\r\\n]*"                         +                             ")+";
+    public static final String measureGroupPattern = "(" +              "(^|[\\n])"      +         "[^\\S\\r\\n]*";
 
     public static void parseTabFile(File file) {
 
@@ -30,7 +30,7 @@ public class Parser {
         //                                     |  |                                                   |              |           |                       |
         //                                     V  V                                                   V              V           V                       V
 
-        Pattern pattern = Pattern.compile("(^|\\n)(" + commentPattern + "*|" + instructionPattern + "*)" + measureGroupPattern + instructionPattern + "*");
+        Pattern pattern = null;//Pattern.compile("(^|\\n)(" + commentPattern + "|" + instructionPattern + ")*" + measureGroupPattern + instructionPattern + "*");
         Matcher ptrnMatcher = pattern.matcher(tabStr);
 
         //tmpMeasureGroups is used to initially store all the lines with measure groups,

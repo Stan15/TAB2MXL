@@ -19,7 +19,7 @@ public class Note {
             stepString = "<step>" + key + "</step>\n";
         }
         else {
-            stepString = "<step>" + key.substring(0,1) + "</step>\n"
+            stepString = "<step>" + key.charAt(0) + "</step>\n"
                     + "<alter>" + 1 + "</alter>\n";
             //In musicxml, # is expressed as <alter>1</alter>
         }
