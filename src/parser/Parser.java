@@ -1,59 +1,71 @@
 package parser;
-import converter.Measure;
 import converter.MeasureGroup;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Iterator;
 import java.util.List;
 import java.util.regex.*;
 
 public class Parser {
-    private final String filePath;
-    private String rootStr;
+    private Path filePath;
+    private String rootString;
     private final Patterns patterns = new Patterns();
-    private List<Measure> score = new ArrayList<>();
+    private List<MeasureGroup> score = new ArrayList<>();
     public static boolean checkForGaps = true;  //check for gaps of information which are not understood to mean anything by the parser and may need to be corrected.
 
     public static void main(String[] args) {
-        Parser p = new Parser("C:\\Users\\stani\\IdeaProjects\\TAB2MXL\\src\\testing files\\guitar - a thousand matches by passenger.txt");
+        Parser p = new Parser(Path.of("C:\\Users\\stani\\IdeaProjects\\TAB2MXL\\src\\testing files\\guitar - a thousand matches by passenger.txt"));
         p.parse();
     }
 
-    public Parser(String filePath) {
+    public Parser(Path filePath) {
         this.filePath = filePath;
-        Path path = Path.of(filePath);
-
+        this.rootString = "";
         try {
-            rootStr = Files.readString(path);
+            rootString = Files.readString(filePath).replace("\r\n","\n");
         }catch(Exception e) {
             e.printStackTrace();
         }
-
+    }
+    public Parser(String rootString) {
+        this.rootString = rootString;
     }
 
-    public List<String> parse() {
-        Pattern pattern = Pattern.compile(patterns.MeasureGroupCollection);
-        Matcher ptrnMatcher = pattern.matcher(this.rootStr);
-        List<String> stuff = new ArrayList<>();
-        while(ptrnMatcher.find()) {
-            //try {
-                stuff.add(ptrnMatcher.group());
-                System.out.println(ptrnMatcher.group());
-                System.out.println("####################");
-                //List<MeasureGroup> measureGroups = parseMeasureGroupCollection(ptrnMatcher.group(), ptrnMatcher.start(), ptrnMatcher.end());
-                //if (checkForGaps && !measureGroups.isEmpty()) {
-                //    this.correctMeasureGroupCollectionGaps();
-                //}
-                //for (MeasureGroup group: measureGroups) {
-                //    System.out.print(group);
-                //}
-            //}//catch(InvalidMeasureFormatException e) {
-                //e.printStackTrace();    //prompt user to correct whatever is going on there.
-            //}
+    public void parse() {
+        List<MeasureGroup> measureGroups = new ArrayList<>();
+        //the regex patterns are too powerful!!! it cant handle a large piece of text, so we break the text down wherever there's \n\n
+        Iterator<String> feeder = this.tabStringFeeder(this.rootString);
+        while (feeder.hasNext()) {
+            String tabString = feeder.next();
+            Pattern pattern = Pattern.compile(patterns.MeasureGroupCollection);
+            Matcher ptrnMatcher = pattern.matcher(tabString);
+            while(ptrnMatcher.find()) {
+                try {
+                    measureGroups.addAll(parseMeasureGroupCollection(ptrnMatcher.group(), ptrnMatcher.start(), ptrnMatcher.end()));
+                    if (checkForGaps && !measureGroups.isEmpty()) {
+                        this.correctMeasureGroupCollectionGaps();
+                    }
+                    for (MeasureGroup group: measureGroups) {
+                        System.out.print(group);
+                    }
+                    score.addAll(measureGroups);
+                }catch(InvalidMeasureFormatException e) {
+                    e.printStackTrace();    //prompt user to correct whatever is going on there.
+                }
 
+            }
         }
-        return stuff;
+    }
+
+    private Iterator<String> tabStringFeeder(String tablatureString) {
+        String[] feed = tablatureString.split("[\\n\\r][^\\S\\n\\r]*[\\n\\r]");
+        for (int i=0; i<feed.length; i++) {
+            feed[i] = "\n\n" + feed[i];
+        }
+        return Arrays.asList(feed).iterator();
     }
 
     /**
@@ -75,12 +87,19 @@ public class Parser {
      * @param startIdx the start index of the measure group collection in the string which is being parsed, this.tabStr
      * @param endIdx the end index of the measure group collection in the string which is being parsed, this.tabStr
      * @return a list of MeasureGroup objects which hold information about the measure groups extracted from the collection.
-     * @throws InvalidMeasureFormatException
+     * @throws InvalidMeasureFormatException if there are an uneven number of measure lines in the measures of a measure group collection.
      */
     private List<MeasureGroup> parseMeasureGroupCollection(String measureGroupCollection, int startIdx, int endIdx) throws InvalidMeasureFormatException {
         //this holds a list of measure groups where each measure group is represented as a list of the lines which make up the group.
-        List<List<String>> measureGroupsStrList= new ArrayList<>();
-        String[] lines = measureGroupCollection.split("\n");
+        List<List<String>> measureGroupsStrList = new ArrayList<>();
+        ArrayList<String> lines = new ArrayList<>();
+        for (String line : measureGroupCollection.split("\n")) {
+            if (Pattern.matches(new Patterns().MeasureGroupCollectionLine, line)) {
+                Matcher matcher = Pattern.compile(Patterns.StripString).matcher(line);
+                matcher.find();
+                lines.add(matcher.group());
+            }
+        }
 
         //line group-count is the number of measure groups there are on a line e.g this line  A|----|---| E|-----|----|---|
         //has a line group-count of 2 as there are two measure groups on the line.
@@ -95,8 +114,7 @@ public class Parser {
         // corresponding measure group number.
         for (String strLine:lines) {
             int currLineGroupCount = 0;
-            Pattern pattern = Pattern.compile(patterns.MeasureGroupLine);
-            Matcher ptrnMatcher = pattern.matcher(strLine);
+            Matcher ptrnMatcher = Pattern.compile(new Patterns().MeasureGroupLine).matcher(strLine);
             while(ptrnMatcher.find()) {
                 //the number of lines in each measure group has to be the same. It is not difficult to handle when they're
                 //not the same, it is just that i don't think it makes sense when they are different as shown below, so
@@ -157,7 +175,7 @@ public class Parser {
 
         List<MeasureGroup> measureGroups = new ArrayList<>();
         for(List<String> groupStrLines:measureGroupsStrList) {
-            measureGroups.add(new MeasureGroup(groupStrLines, startIdx, endIdx, rootStr));
+            measureGroups.add(new MeasureGroup(groupStrLines, startIdx, endIdx, this.rootString));
         }
         return measureGroups;
     }

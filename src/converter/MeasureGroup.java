@@ -16,6 +16,14 @@ public class MeasureGroup implements ScoreComponent{
     private Patterns patterns = new Patterns();
     private List<Measure> measures = new ArrayList<>();
 
+    /**
+     * Instantiates a measure group object
+     * @param lines The list of strings containing the lines which make up the measure group, formatted as
+     *              follows: "[startIdx,endIdx]|measureLineName|---measure-|--group-|--line--|--stuff--|"
+     * @param startIdx the index at which this measure group starts in the root string
+     * @param endIdx the index at which this measure group ends in the root string
+     * @param rootString the tablature string where this measure group belongs.
+     */
     public MeasureGroup(List<String> lines, int startIdx, int endIdx, String rootString) {
         this.lines = lines;
         this.startIdx = startIdx;
@@ -40,33 +48,35 @@ public class MeasureGroup implements ScoreComponent{
         // where its list index is its measure number, starting from measure zero. When it goes to the next
         // line, it starts again from measure number zero and adds each measure in the next line to its
         // corresponding measure number.
-        Pattern measureLineStartPttrn = Pattern.compile(this.patterns.MeasureGroupStartSOL+"|"+this.patterns.MeasureGroupStartMIDL);
+        String measureLineStartRegex = this.patterns.MeasureGroupStartSOL+"|"+this.patterns.MeasureGroupStartMIDL;
+        Pattern measureLineStartPttrn = Pattern.compile(measureLineStartRegex);
         Pattern measureLineNamePttrn = Pattern.compile(this.patterns.MeasureLineName);
-        for (String strLine : this.lines) {
+        for (String measureLine : this.lines) {
+            measureLine = measureLine.split(positionStampPtrn)[1];
+
             //first get the measure line name for this line
+            Matcher measureLineStartMatcher = measureLineStartPttrn.matcher(measureLine);
+            measureLineStartMatcher.find();
+            String measureLineStart = measureLineStartMatcher.group();
+            Matcher measureLineNameMatcher = measureLineNamePttrn.matcher(measureLineStart);
+            measureLineNameMatcher.find();
+            String measureLineName = measureLineNameMatcher.group();
 
-            Matcher ptrnMatcher = measureLineStartPttrn.matcher(strLine);
-            ptrnMatcher.find();
-            String measureLineStart = ptrnMatcher.group();
-            ptrnMatcher = measureLineNamePttrn.matcher(measureLineStart);
-            ptrnMatcher.find();
-            String measureLineName = ptrnMatcher.group();
-
-            Pattern msurInsidesPttrn = Pattern.compile(patterns.MeasureInsides);
-            Matcher msurInsidesMatcher = msurInsidesPttrn.matcher(strLine);
+            Pattern msurInsidesPttrn = Pattern.compile("(?<="+measureLineStartRegex+")"+patterns.MeasureInsides);
+            Matcher msurInsidesMatcher = msurInsidesPttrn.matcher(measureLine);
             int measureCount = 0;
             while (msurInsidesMatcher.find()) {
                 //the information for this single line of a measure as [startIdx,endIdx]line-information
-                int msurLineStartIdx = startIdx + ptrnMatcher.start();
-                int msurLineEndIdx = startIdx + ptrnMatcher.end();
-                String measureLine = "[" + msurLineStartIdx + "," + msurLineEndIdx + "]" + "|"+measureLineName+"|"+ptrnMatcher.group();
+                int msurLineStartIdx = startIdx + measureLineStartMatcher.start();
+                int msurLineEndIdx = startIdx + measureLineStartMatcher.end();
+                String formattedMeasureLine = "[" + msurLineStartIdx + "," + msurLineEndIdx + "]" + measureLineName+"|"+msurInsidesMatcher.group();
 
                 if (measureCount >= measuresStrList.size()) {
                     measuresStrList.add(new ArrayList<>());
                 }
                 //get the measure which this current measure line belongs to and add this line to it
                 List<String> currMeasureGroup = measuresStrList.get(measureCount);
-                currMeasureGroup.add(measureLine);
+                currMeasureGroup.add(formattedMeasureLine);
                 measureCount++;
             }
         }
@@ -84,16 +94,36 @@ public class MeasureGroup implements ScoreComponent{
 
     @Override
     public String toString() {
-        String str = "";
-        for (String line: this.lines) {
-            str+= line.split(positionStampPtrn)[1]+"\n";
-        }
-        return str;
+        if (this.measures==null) {return null;}
+        String strMeasures = "";
+        for(Measure measure:this.measures)
+            strMeasures += measure.toString() + "\n";
+        return strMeasures;
     }
 
+    /**
+     * Validates that all measures in this measure group are of the same type
+     * @return true if all measures are of the same, supported type, false otherwise
+     */
     @Override
     public boolean validate() {
         // TODO validate that all measures in the measureGroup (this.measures) are of the same type by first implementing the Measure.isGuitar() and Measure.isDrum methods
-        return false;
+        String prevType = "";
+        for(Measure measure : measures) {
+            if (measure instanceof GuitarMeasure) {
+                if (prevType.equals("")) {
+                    prevType = "Guitar";
+                }else if (!prevType.equals("Guitar"))
+                    return false;
+            }else if (measure instanceof DrumMeasure) {
+                if (prevType.equals("")) {
+                    prevType = "Drum";
+                }else if (!prevType.equals("Drum"))
+                    return false;
+            }else {
+                return false;   //unsupported type
+            }
+        }
+        return true;
     }
 }
