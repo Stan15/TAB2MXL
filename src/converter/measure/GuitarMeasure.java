@@ -1,9 +1,10 @@
-package converter;
+package converter.measure;
 
-import java.util.ArrayList;
+import converter.measure_line.MeasureLine;
+
 import java.util.List;
 
-public class GuitarMeasure extends Measure{
+public class GuitarMeasure extends Measure {
     private List<MeasureLine> measureLines;
 
     private GuitarMeasure(List<String> lines, int startIdx, int  endIdx, String rootStr) {
