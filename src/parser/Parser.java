@@ -3,10 +3,7 @@ import converter.MeasureGroup;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Iterator;
-import java.util.List;
+import java.util.*;
 import java.util.regex.*;
 
 public class Parser {
@@ -17,11 +14,11 @@ public class Parser {
     public static boolean checkForGaps = true;  //check for gaps of information which are not understood to mean anything by the parser and may need to be corrected.
 
     public static void main(String[] args) {
-        Parser p = new Parser(Path.of("C:\\Users\\stani\\IdeaProjects\\TAB2MXL\\src\\testing files\\guitar - blackbird.txt"));
+        Parser p = new Parser(Path.of("C:\\Users\\stani\\IdeaProjects\\TAB2MXL\\src\\testing files\\drum - so cold by breaking benjamin.txt"), new HashMap<String, String>());
         p.parse();
     }
 
-    public Parser(Path filePath) {
+    public Parser(Path filePath, HashMap<String, String> tabInfo) {
         this.filePath = filePath;
         this.rootString = "";
         try {
@@ -34,7 +31,7 @@ public class Parser {
         this.rootString = rootString;
     }
 
-    public void parse() {
+    public String parse() {
         List<MeasureGroup> measureGroups = new ArrayList<>();
         //the regex patterns are too powerful!!! it cant handle a large piece of text, so we break the text down wherever there's \n\n
         Iterator<String> feeder = this.tabStringFeeder(this.rootString);
@@ -58,6 +55,7 @@ public class Parser {
 
             }
         }
+        return "";
     }
 
     private Iterator<String> tabStringFeeder(String tablatureString) {

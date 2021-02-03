@@ -13,7 +13,6 @@ import javafx.scene.layout.VBox;
 
 public class GUI extends Application {
 	//some change on develop branch
-	//I am making a chshiodfhi the develop2 branch---
 	@Override
 	public void start(Stage primaryStage) {
 		try {
