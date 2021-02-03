@@ -12,7 +12,7 @@ import javafx.scene.layout.VBox;
 
 
 public class GUI extends Application {
-	//some change on develop branch
+	//some change on stanley-dev branch
 	@Override
 	public void start(Stage primaryStage) {
 		try {
