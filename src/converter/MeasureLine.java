@@ -20,8 +20,8 @@ public abstract class MeasureLine implements ScoreComponent {
         return false;
     }
 
-    public static List<String> getLineNames() {
-        ArrayList<String> measureNames = new ArrayList<>();
+    public ArrayList<String> calculateNoteDistance () {
+        ArrayList<String> temp = new ArrayList<>();
         Info = new ArrayList<>();
         int vertBarCounter = 0;
         int dashCounter = 0;
@@ -34,20 +34,27 @@ public abstract class MeasureLine implements ScoreComponent {
                 vertBarCounter++;
                 dashCounter = 0; //reset dash counter
             } else {
-                measureNames.add("" + Line.charAt(i)); //extracting info of note played at the instance played
+                temp.add("" + Line.charAt(i)); //extracting info of note played at the instance played
                 String t = ""; //temp object
-                for (int j = 0; j < measureNames.size(); j++) {
-                    t = t + measureNames.get(j); //
+                for (int j = 0; j < temp.size(); j++) {
+                    t = t + temp.get(j); //
                 }
                 t = vertBarCounter + ", " + t + ", " + dashCounter; //organizes info of note played at the instance played on the bar
                 Info.add(t); //storing into arraylist
                 dashCounter = 0; //reset dash counter
 
-                measureNames.addAll(GuitarMeasureLine.getLineNames());
-                measureNames.addAll(DrumMeasureLine.getLineNames());
-                return measureNames;
+                temp.addAll(GuitarMeasureLine.getLineNames());
+                temp.addAll(DrumMeasureLine.getLineNames());
+                return temp;
             }
         }
-        return getLineNames();
+        return temp;
+    }
+
+    public static List<String> getLineNames() {
+        ArrayList<String> measureNames = new ArrayList<>();
+        measureNames.addAll(GuitarMeasureLine.getLineNames());
+        measureNames.addAll(DrumMeasureLine.getLineNames());
+        return measureNames;
     }
 }
