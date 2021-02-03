@@ -16,7 +16,6 @@ import javafx.scene.layout.VBox;
 import java.io.File;
 
 public class GUI extends Application {
-
 	@Override
 	public void start(Stage primaryStage) {
 		try {
@@ -110,7 +109,7 @@ public class GUI extends Application {
 		outputFields.getChildren().addAll(fileNameField, folderNameField, openFileDialog);
 		outputFields.getStyleClass().add("container");
 
-		//change
+		//change 2f
 		parent.getChildren().addAll(musicalFields, outputFields, convertBttn);
 
 		return parent;
