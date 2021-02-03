@@ -1,11 +1,13 @@
-package converter;
+package converter.measure;
+
+import converter.ScoreComponent;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
 //there should be a concrete guitar measure, drum measure, and bass measure class
-public abstract class Measure implements ScoreComponent{
+public abstract class Measure implements ScoreComponent {
     protected String rootString;
     protected int startIdx;
     protected int endIdx;

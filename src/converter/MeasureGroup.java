@@ -1,5 +1,8 @@
 package converter;
 
+import converter.measure.DrumMeasure;
+import converter.measure.GuitarMeasure;
+import converter.measure.Measure;
 import parser.InvalidMeasureFormatException;
 import parser.Patterns;
 
@@ -62,7 +65,7 @@ public class MeasureGroup implements ScoreComponent{
             measureLineNameMatcher.find();
             String measureLineName = measureLineNameMatcher.group();
 
-            Pattern msurInsidesPttrn = Pattern.compile("(?<="+measureLineStartRegex+")"+patterns.MeasureInsides);
+            Pattern msurInsidesPttrn = Pattern.compile("(?<=\\||"+measureLineStartRegex+")"+patterns.MeasureInsides);
             Matcher msurInsidesMatcher = msurInsidesPttrn.matcher(measureLine);
             int measureCount = 0;
             while (msurInsidesMatcher.find()) {
