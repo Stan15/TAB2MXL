@@ -1,9 +1,9 @@
-package converter;
+package converter.measure_line;
 
 import java.util.Arrays;
 import java.util.List;
 
-public class DrumMeasureLine extends MeasureLine{
+public class DrumMeasureLine extends MeasureLine {
 
     public DrumMeasureLine(String line) {
         super(line);

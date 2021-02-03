@@ -1,11 +1,9 @@
 package parser;
 
-import converter.Measure;
-import converter.MeasureLine;
+import converter.measure_line.MeasureLine;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -19,6 +17,21 @@ public class Patterns {
     private static final String Instruction = "([\\n\\r]"+WhiteSpace+"*"+"#[^\\n\\r]+)";  // TODO same as comment for now. just a dummy placeholder
     public static final String StripString = "(?<=^\\s*).*(?=\\s*$)";
 
+
+    public final String MeasureLineName;
+    //one line of one measure group (measure group, not collection of measure groups. i.e      e|---|----|      not         e|---|---| e|----|----|)
+    public final String MeasureGroupLine;
+    private final String MeasureComponents = "(\\(?[.a-zA-Z0-9~\\/\\\\]+\\)?)+";   // TODO the regex pattern for the individual components like "6h3r8" or "(10)" that are in a measure. should also include multiple measure components next to each other, enclosed in brackets (e.g (10)(7h2))
+    //              The measure could be empty(made up of only at least one "-" and spaces)       or first optional "-"or whitespace, then a measure compomnent, where the measure component either has to end or has to start with a "-"                           and then you can optionally have only one measure component(the last component in the measure) that doesnt end with a "-"
+    //                                                      |                                                       |                                                                                                                                                                             |
+    public final String MeasureInsides = "(" + "("+WhiteSpace+"*-[ -]*(?=\\|))" +       "|("     +    "[ -]*((" + MeasureComponents + WhiteSpace+"*" + "-[ -]*)|(" +WhiteSpace+"*" +"-[ -]*"+ MeasureComponents + ")"+")+"                 +               "("+MeasureComponents+")?" + WhiteSpace+"*)" + ")";
+    public final String MeasureGroupCollection;
+    public final String MeasureGroupCollectionLine;
+    //----------------------Detecting the start of a measure group---------------------------
+    public final String MeasureGroupStartSOL;   //identifies the starting point of measure groups that start at the start of a line
+    public final String MeasureGroupStartMIDL;   //identifies the starting point of measure groups that start in the middle of a line, after a previous measure group ended
+    public final String MeasureGroupStartGen;   //identifies a point where a measure group starts on a line, looking only from when a measure line name is seen. This pattern should not be used on its own. It is only used as a means of abstracting shared parts of the getMeasureGroupStartSOL and getMeasureGroupStartMIDL patterns.
+
     public Patterns() {
         this.MeasureLineName = getMeasureLineName();
         this.MeasureGroupStartGen = getMeasureGroupStartGEN();
@@ -27,20 +40,6 @@ public class Patterns {
         this.MeasureGroupCollectionLine = getMeasureGroupCollectionLine();
         this.MeasureGroupCollection = getMeasureGroupCollecion();
         this.MeasureGroupLine = getMeasureGroupLine();
-    }
-
-    public static void main(String[] args){
-        String filePath = "C:\\Users\\stani\\IdeaProjects\\TAB2MXL\\src\\testing files\\guitar - a thousand matches by passenger.txt";
-        try {
-            String rootStr = Files.readString(Path.of(filePath)).replace("\r\n","\n");
-            Pattern pattern = Pattern.compile("(^|[\\n\\r])([^\\n\\r]+(\\n|\\r|$))+", Pattern.MULTILINE);
-            Matcher ptrnMatcher = pattern.matcher(rootStr);
-            while (ptrnMatcher.find()) {
-                System.out.println("Full match: " + ptrnMatcher.group(0));
-            }
-        }catch (Exception e) {
-            e.printStackTrace();
-        }
     }
 
     private String getMeasureLineName() {
@@ -54,27 +53,17 @@ public class Patterns {
         return pattern;
     }
 
-    public final String MeasureLineName;
-    //one line of one measure group (measure group, not collection of measure groups. i.e      e|---|----|      not         e|---|---| e|----|----|)
-    public final String MeasureGroupLine;
     private String getMeasureGroupLine(){
         String pattern = "(" + "("+MeasureGroupStartSOL+"|"+MeasureGroupStartMIDL+")" + "("+ MeasureInsides + "\\|)+" + ")";
         return pattern;
     }
-    private final String MeasureComponents = "(\\(?[a-zA-Z0-9~\\/\\\\]+\\)?)+";   // TODO the regex pattern for the individual components like "6h3r8" or "(10)" that are in a measure. should also include multiple measure components next to each other, enclosed in brackets (e.g (10)(7h2))
-    //              The measure could be empty(made up of only at least one "-" and spaces)       or first optional "-"or whitespace, then a measure compomnent, where the measure component either has to end or has to start with a "-"                           and then you can optionally have only one measure component(the last component in the measure) that doesnt end with a "-"
-    //                                                      |                                                       |                                                                                                                                                                             |
-    public final String MeasureInsides = "(" + "("+WhiteSpace+"*-[ -]*(?=\\|))" +       "|("     +    "[ -]*((" + MeasureComponents + WhiteSpace+"*" + "-[ -]*)|(" +WhiteSpace+"*" +"-[ -]*"+ MeasureComponents + ")"+")+"                 +               "("+MeasureComponents+")?" + WhiteSpace+"*)" + ")";
 
-
-    public final String MeasureGroupCollection;
-    public final String MeasureGroupCollectionLine;
     private String getMeasureGroupCollectionLine() {
-        //                 Measure starts at the start of line      (Measure insides and "|")once or more       zero or more measure groups that start in the middle of the line     new line or end of file
-        //                                |                                       |                                                           |                                                  |
-        //                    --------------------             ----------------------------------           ----------------------------------------------------------------------      -------------
+        //                 Measure starts at the start of line      (Measure insides and "|")once or more       zero or more measure groups that start in the middle of the line                    new line or end of file
+        //                                |                                       |                                                           |                                                                 |
+        //                    --------------------             ----------------------------------           ----------------------------------------------------------------------                        -------------
 
-        String pattern =   "("+MeasureGroupStartSOL        +       "("+ MeasureInsides + "\\|)+"        +     "(" + MeasureGroupStartMIDL + "("+ MeasureInsides + "\\|"+")+" + ")*"  +    "(\\n|\\r|$)" + ")";
+        String pattern =   "("+MeasureGroupStartSOL        +       "("+ MeasureInsides + "\\|)+"        +     "(" + MeasureGroupStartMIDL + "("+ MeasureInsides + "\\|"+")+" + ")*"  + WhiteSpace+"*" +    "(\\n|\\r|$)" + ")";
         return pattern;
     }
     /**
@@ -91,12 +80,6 @@ public class Patterns {
         String pattern = "(" +"(?<!"+MeasureGroupStartSOL+"[^\\n\\r])" + WhiteSpace+"*" + "("+Instruction+"|"+Comment+")*"           +           collection                 +          "("+  Instruction+"*" + "(?=$|\\n)" + ")?)";
         return collection;
     }
-
-
-    //----------------------Detecting the start of a measure group---------------------------
-    public final String MeasureGroupStartSOL;   //identifies the starting point of measure groups that start at the start of a line
-    public final String MeasureGroupStartMIDL;   //identifies the starting point of measure groups that start in the middle of a line, after a previous measure group ended
-    public final String MeasureGroupStartGen;   //identifies a point where a measure group starts on a line, looking only from when a measure line name is seen. This pattern should not be used on its own. It is only used as a means of abstracting shared parts of the getMeasureGroupStartSOL and getMeasureGroupStartMIDL patterns.
 
     private String getMeasureGroupStartGEN() {
         //          v                  vv
