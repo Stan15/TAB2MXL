@@ -1,11 +1,13 @@
-package converter;
+package converter.measure;
 
-import java.util.Collection;
+import converter.measure_line.DrumMeasureLine;
+import converter.measure_line.MeasureLine;
+
 import java.util.List;
 
-public class DrumMeasure extends Measure{
+public class DrumMeasure extends Measure {
     private List<MeasureLine> measureLines;
-
+//ddd
     private DrumMeasure(List<String> lines, int startIdx, int  endIdx, String rootStr) {
         super(lines, startIdx, endIdx, rootStr);
     }

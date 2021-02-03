@@ -1,10 +1,12 @@
-package converter;
+package converter.measure_line;
+
+import converter.ScoreComponent;
+import converter.measure_line.DrumMeasureLine;
+import converter.measure_line.GuitarMeasureLine;
 
 import javax.sound.sampled.Line;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 public abstract class MeasureLine implements ScoreComponent {
 
