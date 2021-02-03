@@ -1,11 +1,13 @@
-package converter;
+package converter.measure_line;
+
+import converter.ScoreComponent;
+import converter.measure_line.DrumMeasureLine;
+import converter.measure_line.GuitarMeasureLine;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
-public abstract class MeasureLine implements ScoreComponent{
+public abstract class MeasureLine implements ScoreComponent {
 
     public MeasureLine(String line) {
         //i think you will need to extract the measure line name using the patterns Patterns().
