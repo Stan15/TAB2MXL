@@ -1,6 +1,6 @@
 package converter;
 
-public class Note {
+public class Note implements ScoreComponent {
     public static void main(String[] args) {
         System.out.println(pitchScript(2,13));
         //example
@@ -114,5 +114,10 @@ public class Note {
         else {
             return keys[(fret + 4) % 12];
         }
+    }
+
+    @Override
+    public boolean validate() {
+        return false;
     }
 }
