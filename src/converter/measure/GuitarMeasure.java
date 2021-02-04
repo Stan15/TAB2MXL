@@ -25,4 +25,9 @@ public class GuitarMeasure extends Measure {
         // and that they are placed in the right order (e, B, G, D, A, E).
         return false;
     }
+
+    @Override
+    public String toXML() {
+        return null;
+    }
 }

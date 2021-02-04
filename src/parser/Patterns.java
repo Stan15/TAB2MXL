@@ -1,5 +1,7 @@
 package parser;
 
+
+import converter.ScoreComponent;
 import converter.measure_line.MeasureLine;
 
 import java.nio.file.Files;
@@ -12,7 +14,7 @@ import java.util.regex.Pattern;
  * The purpose of this class is to define the regex patterns used to identify measure groups, measures, instructions notes, etc.
  */
 public class Patterns {
-    private static final String WhiteSpace = "[^\\S\\n\\r]";   //whitespace excluding newline and return.
+    public static final String WhiteSpace = "[^\\S\\n\\r]";   //whitespace excluding newline and return.
     private static final String Comment = "([\\n\\r]"+WhiteSpace+"*"+"#[^\\n\\r]+)";  //newline, #, and one or more of anything that's not a newline
     private static final String Instruction = "([\\n\\r]"+WhiteSpace+"*"+"#[^\\n\\r]+)";  // TODO same as comment for now. just a dummy placeholder
     public static final String StripString = "(?<=^\\s*).*(?=\\s*$)";
@@ -40,6 +42,32 @@ public class Patterns {
         this.MeasureGroupCollectionLine = getMeasureGroupCollectionLine();
         this.MeasureGroupCollection = getMeasureGroupCollecion();
         this.MeasureGroupLine = getMeasureGroupLine();
+    }
+
+    public static String removePositionStamp(String s) {
+        String[] stuff = s.split(ScoreComponent.positionStampPtrn);
+        if (stuff.length>1)
+            return stuff[1];
+        return "";
+    }
+    public static Integer[] getPositionFromStamp(String s) {
+        Pattern pattern = Pattern.compile(ScoreComponent.positionStampPtrn);
+        Matcher matcher = pattern.matcher(s);
+        matcher.find();
+        String positionStamp = matcher.group();
+
+        pattern = Pattern.compile("(?<=\\[)-?[0-9]+(?=,)");
+        matcher = pattern.matcher(positionStamp);
+        matcher.find();
+        int startIdx = Integer.valueOf(matcher.group());
+
+        pattern = Pattern.compile("(?<=,)-?[0-9]+(?=\\])");
+        matcher = pattern.matcher(positionStamp);
+        matcher.find();
+        int endIdx = Integer.valueOf(matcher.group());
+
+        Integer[] position = {startIdx, endIdx};
+        return position;
     }
 
     private String getMeasureLineName() {
