@@ -8,9 +8,11 @@ public class Note implements ScoreComponent {
 
     private int octave;
     private String key;
+    private int duration;
     public Note(int stringNumber, int fret, int duration) {
         this.octave = octave(stringNumber, fret);
         this.key = Note.key(stringNumber, fret);
+        this.duration = duration;
     }
 
     //I made only pitch part for now.
@@ -127,6 +129,14 @@ public class Note implements ScoreComponent {
 
     @Override
     public String toXML() {
-        return pitchScript();
+        return "<note>\n" +
+                    pitchScript()+"\n" +
+                    "<duration>"+this.duration+"</duration>"+
+                    getTie()+
+                "</note>";
+    }
+
+    private String getTie() {
+        return "";
     }
 }

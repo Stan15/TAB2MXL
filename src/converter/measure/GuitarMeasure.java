@@ -28,6 +28,8 @@ public class GuitarMeasure extends Measure {
 
     @Override
     public String toXML() {
+        // TODO much later on, check the notes in all the measure lines for notes with the same duration and make a chord out of them. then
+        //remove all the other notes that make up the chord and place the chord in the appropriate location
         return null;
     }
 }
