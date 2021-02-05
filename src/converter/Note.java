@@ -2,17 +2,23 @@ package converter;
 
 public class Note implements ScoreComponent {
     public static void main(String[] args) {
-        System.out.println(pitchScript(2,13));
-        //example
+        Note note = new Note(2, 13, 1);
+        System.out.println(note.toXML());
+    }
+
+    private int octave;
+    private String key;
+    private int duration;
+    public Note(int stringNumber, int fret, int duration) {
+        this.octave = octave(stringNumber, fret);
+        this.key = Note.key(stringNumber, fret);
+        this.duration = duration;
     }
 
     //I made only pitch part for now.
     //reference: https://theacousticguitarist.com/all-notes-on-guitar/
     //make script
-    public static String pitchScript(int stringNumber, int fret) {
-        int octave = Note.octave(stringNumber, fret);
-        String key = Note.key(stringNumber, fret);
-
+    public String pitchScript() {
         String octaveString = "<octave>" + octave + "</octave>\n";
         String stepString;
         if(!key.contains("#")) {
@@ -119,5 +125,18 @@ public class Note implements ScoreComponent {
     @Override
     public boolean validate() {
         return false;
+    }
+
+    @Override
+    public String toXML() {
+        return "<note>\n" +
+                    pitchScript()+"\n" +
+                    "<duration>"+this.duration+"</duration>"+
+                    getTie()+
+                "</note>";
+    }
+
+    private String getTie() {
+        return "";
     }
 }

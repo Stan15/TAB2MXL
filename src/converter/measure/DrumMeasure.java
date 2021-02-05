@@ -7,7 +7,6 @@ import java.util.List;
 
 public class DrumMeasure extends Measure {
     private List<MeasureLine> measureLines;
-//ddd
     private DrumMeasure(List<String> lines, int startIdx, int  endIdx, String rootStr) {
         super(lines, startIdx, endIdx, rootStr);
     }
@@ -29,5 +28,10 @@ public class DrumMeasure extends Measure {
             }
         }
         return true;
+    }
+
+    @Override
+    public String toXML() {
+        return null;
     }
 }
