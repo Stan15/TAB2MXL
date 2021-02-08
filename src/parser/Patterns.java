@@ -4,8 +4,6 @@ package parser;
 import converter.ScoreComponent;
 import converter.measure_line.MeasureLine;
 
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -71,7 +69,7 @@ public class Patterns {
     }
 
     private String getMeasureLineName() {
-        List<String> measureLineNames = MeasureLine.getLineNames();
+        List<String> measureLineNames = MeasureLine.getAllLineNames();
         String pattern = "("+measureLineNames.get(0);
         for (int i=1; i<measureLineNames.size(); i++) {
             pattern+= "|"+measureLineNames.get(i);

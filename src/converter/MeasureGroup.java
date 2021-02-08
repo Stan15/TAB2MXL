@@ -149,7 +149,7 @@ public class MeasureGroup implements ScoreComponent{
             for (int measureNum=0; measureNum<measures.size(); measureNum++) {
                 //print the measureName only for the first measure
                 if (measureNum==0) {
-                   str += MeasureLine.getName(measures.get(measureNum)[measureLineNum]) + "|";
+                   str += MeasureLine.getNameOf(measures.get(measureNum)[measureLineNum]) + "|";
                 }
                 Pattern measureContentPttrn = Pattern.compile(patterns.MeasureInsides);
                 Matcher measureContentMatcher = measureContentPttrn.matcher(measures.get(measureNum)[measureLineNum]);
