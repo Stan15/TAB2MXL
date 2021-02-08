@@ -11,8 +11,8 @@ import java.util.regex.Pattern;
 public abstract class MeasureLine implements ScoreComponent {
 
     private ArrayList<Object> Info;
-    private String Line;
-    private String name;
+    protected String Line;
+    protected String name;
     private int startIdx;
     private int endIdx;
 
@@ -24,10 +24,15 @@ public abstract class MeasureLine implements ScoreComponent {
         this.endIdx = position[1];
 
         s = Patterns.removePositionStamp(s);
-        this.Line = s;
-        this.name = getName(s);
+        this.name = getNameOf(s);
+        this.Line = removeNameOf(s);  //removing the line name from the line
 
     }
+
+    public String getName() {
+        return this.name;
+    }
+
 
     public static boolean isDrum(String measureLine) {
         return false;
@@ -69,7 +74,7 @@ public abstract class MeasureLine implements ScoreComponent {
     }
 
     //this gets all possible measure names for all measure types
-    public static List<String> getLineNames() {
+    public static List<String> getAllLineNames() {
         ArrayList<String> measureNames = new ArrayList<>();
         measureNames.addAll(GuitarMeasureLine.getLineNames());
         measureNames.addAll(DrumMeasureLine.getLineNames());
@@ -77,7 +82,7 @@ public abstract class MeasureLine implements ScoreComponent {
     }
 
     //gets the measure name of this particular measure
-    public static String getName(String line) {
+    public static String getNameOf(String line) {
         Patterns patterns = new Patterns();
         Pattern measureLineNamePttrn = Pattern.compile("^"+patterns.WhiteSpace+"*"+patterns.MeasureLineName);
         Matcher measureLineNameMatcher = measureLineNamePttrn.matcher(line);
@@ -85,8 +90,24 @@ public abstract class MeasureLine implements ScoreComponent {
         return measureLineNameMatcher.group().strip();
     }
 
+
+    public static String removeNameOf(String line) {
+        Patterns patterns = new Patterns();
+        String[] temp = line.split("^"+patterns.WhiteSpace+"*"+patterns.MeasureLineName+patterns.WhiteSpace+"*"+"\\|");
+        if (temp.length>1) {
+            line = temp[1]; //since i specified start of file, there can only be one match
+        }else {
+            line = temp[0];
+        }
+        return line.strip();
+    }
+
     @Override
     public String toString() {
         return this.Line + "|";
+    }
+
+    public void setName(String e) {
+        this.name = e;
     }
 }
