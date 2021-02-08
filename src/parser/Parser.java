@@ -16,6 +16,10 @@ public class Parser {
     public static void main(String[] args) {
         Parser p = new Parser(Path.of("C:\\Users\\stani\\IdeaProjects\\TAB2MXL\\src\\testing files\\guitar - a thousand matches by passenger.txt"), new HashMap<>());
         p.parse();
+        String xml = "";
+        for (MeasureGroup mGroup : p.score) {
+            xml += mGroup.toXML() + "\n";
+        }
     }
 
     public Parser(Path filePath, HashMap<String, String> tabInfo) {
