@@ -1,9 +1,13 @@
-package converter;
+package converter.measure_line;
 
+import converter.Beat;
+
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-public class DrumMeasureLine extends MeasureLine{
+public class DrumMeasureLine extends MeasureLine {
+    protected List<Beat> beats = new ArrayList<>();
 
     public DrumMeasureLine(String line) {
         super(line);
@@ -25,5 +29,10 @@ public class DrumMeasureLine extends MeasureLine{
     public boolean validate() {
         //validate that the measure line components, or notes, are valid and as expected of a guitar measure line
         return false;
+    }
+
+    @Override
+    public String toXML() {
+        return null;
     }
 }
