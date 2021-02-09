@@ -17,7 +17,7 @@ public class GUI extends Application {
 	@Override
 	public void start(Stage primaryStage) {
 		try {
-			VBox root = new VBox();
+			VBox root = new VBox(); //testchange
 			root.setId("root");
 			Scene scene = new Scene(root,600,480);
 			scene.getStylesheets().add(getClass().getResource("application.css").toExternalForm());

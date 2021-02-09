@@ -28,6 +28,10 @@ public class MeasureGroup implements ScoreComponent{
      * @param endIdx the index at which this measure group ends in the root string
      * @param rootString the tablature string where this measure group belongs.
      */
+    //[startIdx,endIdx]|p|---measure-|--group-|--line--|--stuff--|
+    //[startIdx,endIdx]|5----|--group-|--line--|--stuff--
+    //[startIdx,endIdx]|p---measure-|--group-|--line--|--stuff--|
+    //[startIdx,endIdx]|e---measure-|--group-|--line--|--stuff--|
     public MeasureGroup(List<String> lines, int startIdx, int endIdx, String rootString) {
         this.lines = lines;
         this.startIdx = startIdx;
@@ -128,16 +132,19 @@ public class MeasureGroup implements ScoreComponent{
         return true;
     }
 
-    @Override
     public String toXML() {
-        String xmlString = "";
-        for (Measure measure : this.measures) {
-            xmlString += measure.toXML() + "\n";
+        StringBuilder measureGroupXML = new StringBuilder();
+        for (int i=0; i<this.measures.size(); i++) {
+            Measure measure = this.measures.get(i);
+            if (measure instanceof GuitarMeasure)
+                measureGroupXML.append(((GuitarMeasure)measure).toXML() + "\n");
+            else
+                continue;
+                // TODO handle other types
         }
-        return xmlString;
+        return measureGroupXML.toString();
     }
 
-    @Override
     public String toString() {
         String str = "";
         List<String[]> measures = new ArrayList<>();

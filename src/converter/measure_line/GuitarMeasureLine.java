@@ -7,10 +7,13 @@ import java.util.Arrays;
 import java.util.List;
 
 public class GuitarMeasureLine extends MeasureLine {
-    protected List<Note> notes = new ArrayList<>();
+    public int beats;
+    public int beatType;
 
-    public GuitarMeasureLine(String line) {
+    public GuitarMeasureLine(String line, int beats, int beatType) {
         super(line);
+        this.beats = beats;
+        this.beatType = beatType;
     }
 
     public static boolean isGuitar(String line) {
@@ -35,7 +38,6 @@ public class GuitarMeasureLine extends MeasureLine {
         return false;
     }
 
-    @Override
     public String toXML() {
         
         return null;
