@@ -86,7 +86,10 @@ public abstract class MeasureLine implements ScoreComponent {
     }
 
     //E|----------|------------|
-    public static String removeNameOf(String line) {
+    public static String removeNameOf(String line) {//throws InvalidParameterValueException{
+        //if (line == null){
+        //    throw new InvalidParameterValueException();
+        //}
         Patterns patterns = new Patterns();
         String[] temp = line.split("^"+patterns.WhiteSpace+"*"+patterns.MeasureLineName+patterns.WhiteSpace+"*"+"\\|");
         if (temp.length>1) {
