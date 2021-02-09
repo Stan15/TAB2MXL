@@ -1,5 +1,6 @@
 package converter.measure_line;
 
+import converter.Note;
 import converter.ScoreComponent;
 import parser.Patterns;
 
@@ -9,7 +10,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public abstract class MeasureLine implements ScoreComponent {
-
+    public List<Note> notes = new ArrayList<>();
     private ArrayList<Object> Info;
     protected String Line;
     protected String name;
@@ -26,20 +27,14 @@ public abstract class MeasureLine implements ScoreComponent {
         s = Patterns.removePositionStamp(s);
         this.name = getNameOf(s);
         this.Line = removeNameOf(s);  //removing the line name from the line
+        this.notes = this.getNotes();
 
     }
 
-    public String getName() {
-        return this.name;
-    }
+    private List<Note> getNotes() {
+        List<Note> noteList = new ArrayList<Note>();
 
-
-    public static boolean isDrum(String measureLine) {
-        return false;
-    }
-
-    public static boolean isGuitar(String line) {
-        return true;
+        return noteList;
     }
 
     public ArrayList<String> calculateNoteDistance () {
@@ -90,8 +85,11 @@ public abstract class MeasureLine implements ScoreComponent {
         return measureLineNameMatcher.group().strip();
     }
 
-
-    public static String removeNameOf(String line) {
+    //E|----------|------------|
+    public static String removeNameOf(String line) {//throws InvalidParameterValueException{
+        //if (line == null){
+        //    throw new InvalidParameterValueException();
+        //}
         Patterns patterns = new Patterns();
         String[] temp = line.split("^"+patterns.WhiteSpace+"*"+patterns.MeasureLineName+patterns.WhiteSpace+"*"+"\\|");
         if (temp.length>1) {
@@ -109,5 +107,25 @@ public abstract class MeasureLine implements ScoreComponent {
 
     public void setName(String e) {
         this.name = e;
+    }
+
+    public static boolean isDrum(String line) {
+        line = Patterns.removePositionStamp(line);
+        String name = MeasureLine.getNameOf(line);
+        if (DrumMeasureLine.getLineNames().contains(name))
+            return true;
+        return false;
+    }
+
+    public static boolean isGuitar(String line) {
+        line = Patterns.removePositionStamp(line);
+        String name = MeasureLine.getNameOf(line);
+        if (GuitarMeasureLine.getLineNames().contains(name))
+            return true;
+        return false;
+    }
+
+    public String getName() {
+        return this.name;
     }
 }

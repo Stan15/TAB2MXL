@@ -31,7 +31,6 @@ public class DrumMeasureLine extends MeasureLine {
         return false;
     }
 
-    @Override
     public String toXML() {
         return null;
     }

@@ -1,5 +1,6 @@
 package parser;
 import converter.MeasureGroup;
+import converter.measure.Measure;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -16,6 +17,7 @@ public class Parser {
     public static void main(String[] args) {
         Parser p = new Parser(Path.of("C:\\Users\\stani\\IdeaProjects\\TAB2MXL\\src\\testing files\\guitar - a thousand matches by passenger.txt"), new HashMap<>());
         p.parse();
+        System.out.println(p.parse());
     }
 
     public Parser(Path filePath, HashMap<String, String> tabInfo) {
@@ -32,6 +34,7 @@ public class Parser {
     }
 
     public String parse() {
+        Measure.measureNum = 0;
         List<MeasureGroup> measureGroups = new ArrayList<>();
         //the regex patterns are too powerful!!! it cant handle a large piece of text, so we break the text down wherever there's \n\n
         Iterator<String> feeder = this.tabStringFeeder(this.rootString);
@@ -45,9 +48,6 @@ public class Parser {
                     if (checkForGaps && !measureGroups.isEmpty()) {
                         this.correctMeasureGroupCollectionGaps();
                     }
-                    for (MeasureGroup group: measureGroups) {
-                        System.out.print(group+"\n");
-                    }
                     score.addAll(measureGroups);
                 }catch(InvalidMeasureFormatException e) {
                     e.printStackTrace();    //prompt user to correct whatever is going on there.
@@ -55,7 +55,33 @@ public class Parser {
 
             }
         }
-        return "";
+        this.score.addAll(measureGroups);
+        String returnVal = this.toXML();
+        return returnVal;
+    }
+
+    public String toXML() {
+        StringBuilder scoreXML = new StringBuilder();
+        scoreXML.append("<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?>\n" +
+                "<!DOCTYPE score-partwise PUBLIC\n" +
+                " \"-//Recordare//DTD MusicXML 3.1 Partwise//EN\"\n" +
+                " \"http://www.musicxml.org/dtds/partwise.dtd\">\n");
+        scoreXML.append("<score-partwise version=\"3.1\">\n" +
+                " <part-list>\n" +
+                " <score-part id=\"P1\">\n" +
+                " <part-name>Music</part-name>\n" +
+                " </score-part>\n" +
+                " </part-list>\n" +
+                " <part id=\"P1\">\n");
+        for (int i=0; i<this.score.size(); i++) {
+            MeasureGroup measureGroup = this.score.get(i);
+            scoreXML.append(measureGroup.toXML());
+        }
+        scoreXML.append("</part>\n" +
+                "</score-partwise>");
+
+        String returnVal = scoreXML.toString();
+        return returnVal;
     }
 
     private Iterator<String> tabStringFeeder(String tablatureString) {
