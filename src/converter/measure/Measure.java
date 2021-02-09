@@ -17,6 +17,7 @@ public abstract class Measure implements ScoreComponent {
     protected int endIdx;
     protected List<String> lines;
     protected List<MeasureLine> measureLines;
+    public static int measureNum = 0;
     
     public Measure(List<String> lines, int startIdx, int  endIdx, String rootStr) {
         this.lines = lines;
@@ -29,10 +30,11 @@ public abstract class Measure implements ScoreComponent {
     public List<MeasureLine> getMeasureLines() {
         List<MeasureLine> measureLines = new ArrayList<>();
         for (String line : this.lines) {
-            if (MeasureLine.isDrum(line))
+            if (MeasureLine.isGuitar(line)) {
+                GuitarMeasure measure = (GuitarMeasure)this;
+                measureLines.add(new GuitarMeasureLine(line, measure.beats, measure.beatType));
+            }else if (MeasureLine.isDrum(line))
                 measureLines.add(new DrumMeasureLine(line));
-            if (MeasureLine.isGuitar(line))
-                measureLines.add(new GuitarMeasureLine(line));
         }
         return measureLines;
     }
@@ -74,5 +76,9 @@ public abstract class Measure implements ScoreComponent {
             str+= line.toString()+"\n";
         }
         return str;
+    }
+
+    public String toXML() {
+        return null;
     }
 }

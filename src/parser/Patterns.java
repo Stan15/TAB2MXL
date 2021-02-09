@@ -42,10 +42,12 @@ public class Patterns {
         this.MeasureGroupLine = getMeasureGroupLine();
     }
 
-    public static String removePositionStamp(String s) {
-        String[] stuff = s.split(ScoreComponent.positionStampPtrn);
-        if (stuff.length>1)
-            return stuff[1];
+    public static String removePositionStamp(String line) {
+        String[] stuff = line.split(ScoreComponent.positionStampPtrn);
+        for (String s : stuff) {
+            if (!s.equals(""))
+                return s;
+        }
         return "";
     }
     public static Integer[] getPositionFromStamp(String s) {

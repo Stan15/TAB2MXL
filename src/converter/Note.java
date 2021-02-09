@@ -1,18 +1,23 @@
 package converter;
 
-public class Note implements ScoreComponent {
+import java.util.ArrayList;
+import java.util.List;
+
+public abstract class Note implements ScoreComponent, Comparable {
+    public int distanceToMeasureStart;
     public static void main(String[] args) {
-        Note note = new Note(2, 13, 1);
-        System.out.println(note.toXML());
+        Note note = new GuitarNote(2, 13, 1, 5);
+        System.out.println(note.toXML(true));
     }
 
     private int octave;
     private String key;
     private int duration;
-    public Note(int stringNumber, int fret, int duration) {
+    public Note(int stringNumber, int fret, int duration, int distanceToMeasureStart) {
         this.octave = octave(stringNumber, fret);
         this.key = Note.key(stringNumber, fret);
         this.duration = duration;
+        this.distanceToMeasureStart = distanceToMeasureStart;
     }
 
     //I made only pitch part for now.
@@ -33,7 +38,7 @@ public class Note implements ScoreComponent {
         return "<pitch>\n"
                 + stepString
                 + octaveString
-                + "</pitch>";
+                + "</pitch>\n";
     }
 
     //decide octave of note
@@ -127,16 +132,34 @@ public class Note implements ScoreComponent {
         return false;
     }
 
-    @Override
-    public String toXML() {
-        return "<note>\n" +
-                    pitchScript()+"\n" +
-                    "<duration>"+this.duration+"</duration>"+
-                    getTie()+
-                "</note>";
+    public String toXML(boolean startsWithPrevious) {
+        StringBuilder noteXML = new StringBuilder();
+        noteXML.append("<note>\n");
+
+        if (startsWithPrevious)
+            noteXML.append("<chord/>\n");
+        noteXML.append(pitchScript());
+        noteXML.append("<duration>");
+        noteXML.append(this.duration);
+        noteXML.append("</duration>\n");
+
+        noteXML.append("<note>\n");
+
+        return noteXML.toString();
     }
 
-    private String getTie() {
-        return "";
+    public void setTie() {
+        return;
+    }
+
+    @Override
+    public int compareTo(Object o) {
+        Note other = (Note) o;
+        return other.distanceToMeasureStart-this.distanceToMeasureStart;
+    }
+
+    //Creates a new arraylist of Note objects from stuff like 12h3 or (6\2) or (2)(7h1)
+    public static List<Note> from(String noteString, int distanceFromMeasureStart) {
+        return new ArrayList<>();
     }
 }
