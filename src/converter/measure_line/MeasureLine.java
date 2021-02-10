@@ -72,7 +72,7 @@ public abstract class MeasureLine implements ScoreComponent {
     //gets the measure name of this particular measure
     public static String getNameOf(String line) {
         Patterns patterns = new Patterns();
-        Pattern measureLineNamePttrn = Pattern.compile("(?<=^\\|?)"+patterns.WhiteSpace+"*"+patterns.MeasureLineName);
+        Pattern measureLineNamePttrn = Pattern.compile(patterns.MeasureLineName);
         Matcher measureLineNameMatcher = measureLineNamePttrn.matcher(line);
         measureLineNameMatcher.find();
         return measureLineNameMatcher.group().strip();
@@ -84,7 +84,7 @@ public abstract class MeasureLine implements ScoreComponent {
         //    throw new InvalidParameterValueException();
         //}
         Patterns patterns = new Patterns();
-        String[] temp = line.split("^"+patterns.WhiteSpace+"*"+patterns.MeasureLineName+patterns.WhiteSpace+"*"+"\\|");
+        String[] temp = line.split(patterns.MeasureLineName+patterns.WhiteSpace+"*"+"\\|");
         if (temp.length>1) {
             line = temp[1]; //since i specified start of file, there can only be one match
         }else {
