@@ -89,11 +89,15 @@ public class MeasureGroup implements ScoreComponent{
             }
         }
         List<Measure> measuresList = new ArrayList<>();
-        for(List<String> msurStrLines:measuresStrList) {
+        for(int i=0; i<measuresStrList.size(); i++) {
+            List<String> msurStrLines = measuresStrList.get(i);
+            boolean isFirstMeasure = false;
+            if (i==0)
+                isFirstMeasure = true;
             if (Measure.isGuitar(msurStrLines))
-                measuresList.add(GuitarMeasure.getInstance(msurStrLines, startIdx, endIdx, rootString));
+                measuresList.add(GuitarMeasure.getInstance(msurStrLines, startIdx, endIdx, rootString, isFirstMeasure));
             else if (Measure.isDrum(msurStrLines))
-                measuresList.add(DrumMeasure.getInstance(msurStrLines, startIdx, endIdx, rootString));
+                measuresList.add(DrumMeasure.getInstance(msurStrLines, startIdx, endIdx, rootString, isFirstMeasure));
             else
                 throw new InvalidMeasureFormatException("measure type not supported");
         }
@@ -137,7 +141,7 @@ public class MeasureGroup implements ScoreComponent{
         for (int i=0; i<this.measures.size(); i++) {
             Measure measure = this.measures.get(i);
             if (measure instanceof GuitarMeasure)
-                measureGroupXML.append(((GuitarMeasure)measure).toXML() + "\n");
+                measureGroupXML.append(((GuitarMeasure)measure).toXML());
             else
                 continue;
                 // TODO handle other types

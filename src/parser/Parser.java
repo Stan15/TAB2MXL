@@ -15,7 +15,7 @@ public class Parser {
     public static boolean checkForGaps = true;  //check for gaps of information which are not understood to mean anything by the parser and may need to be corrected.
 
     public static void main(String[] args) {
-        Parser p = new Parser(Path.of("/Users/adilhashmi/IdeaProjects/TAB2MXL/src/testing files/guitar - a thousand matches by passenger.txt"), new HashMap<>());
+        Parser p = new Parser(Path.of("C:\\Users\\stani\\IdeaProjects\\TAB2MXL\\src\\testing files\\guitar - let it be the beatles.txt"), new HashMap<>());
         p.parse();
         System.out.println(p.parse());
     }

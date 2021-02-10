@@ -7,7 +7,6 @@ import converter.measure_line.MeasureLine;
 import parser.Patterns;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 //there should be a concrete guitar measure, drum measure, and bass measure class
@@ -17,13 +16,15 @@ public abstract class Measure implements ScoreComponent {
     protected int endIdx;
     protected List<String> lines;
     protected List<MeasureLine> measureLines;
+    protected boolean isFirstMeasure;
     public static int measureNum = 0;
     
-    public Measure(List<String> lines, int startIdx, int  endIdx, String rootStr) {
+    public Measure(List<String> lines, int startIdx, int endIdx, String rootStr, boolean isFirstMeasure) {
         this.lines = lines;
         this.startIdx = startIdx;
         this.endIdx = endIdx;
         this.rootString = rootStr;
+        this.isFirstMeasure = isFirstMeasure;
         this.measureLines = getMeasureLines();
     }
 
