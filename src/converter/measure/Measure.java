@@ -15,8 +15,8 @@ public abstract class Measure implements ScoreComponent {
     protected int startIdx;
     protected int endIdx;
     protected List<String> lines;
-    protected List<MeasureLine> measureLines;
-    protected boolean isFirstMeasure;
+    public List<MeasureLine> measureLines;
+    public boolean isFirstMeasure;
     public static int measureNum = 0;
     
     public Measure(List<String> lines, int startIdx, int endIdx, String rootStr, boolean isFirstMeasure) {

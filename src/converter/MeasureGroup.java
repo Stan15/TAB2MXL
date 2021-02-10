@@ -18,7 +18,7 @@ public class MeasureGroup implements ScoreComponent{
     private int endIdx;
     private List<String> lines;
     private Patterns patterns = new Patterns();
-    private List<Measure> measures = new ArrayList<>();
+    public List<Measure> measures = new ArrayList<>();
 
     /**
      * Instantiates a measure group object

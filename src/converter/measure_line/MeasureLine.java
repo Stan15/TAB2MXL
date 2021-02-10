@@ -12,7 +12,7 @@ import java.util.regex.Pattern;
 public abstract class MeasureLine implements ScoreComponent {
     public List<Note> notes = new ArrayList<>();
     private ArrayList<Object> Info;
-    protected String Line;
+    public String Line;
     protected String name;
     private int startIdx;
     private int endIdx;
