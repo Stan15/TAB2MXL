@@ -40,7 +40,8 @@ public abstract class MeasureLine implements ScoreComponent {
                 if(noteString != null){
                     this.notes.addAll(Note.from(noteString, dashCounter, this.name));
                     noteString = null;
-                } dashCounter++;
+                }
+                dashCounter++;
             } else if (Line.charAt(i) == '|') { //accounts for each instance of vertical bar
                 if(noteString != null){
                     this.notes.addAll(Note.from(noteString, dashCounter, this.name));
@@ -51,6 +52,7 @@ public abstract class MeasureLine implements ScoreComponent {
                 if(noteString == null){
                     noteString = "";
                 }
+                dashCounter++;
                 noteString += Line.charAt(i);
             }
         }
