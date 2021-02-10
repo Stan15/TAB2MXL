@@ -72,7 +72,8 @@ public class Patterns {
 
     private String getMeasureLineName() {
         List<String> measureLineNames = MeasureLine.getAllLineNames();
-        String pattern = "("+measureLineNames.get(0);
+
+        String pattern = "(?<=^\\|?)"+WhiteSpace+"*"+"("+measureLineNames.get(0);
         for (int i=1; i<measureLineNames.size(); i++) {
             pattern+= "|"+measureLineNames.get(i);
         }
