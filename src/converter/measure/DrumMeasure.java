@@ -7,12 +7,12 @@ import java.util.List;
 
 public class DrumMeasure extends Measure {
     private List<MeasureLine> measureLines;
-    private DrumMeasure(List<String> lines, int startIdx, int  endIdx, String rootStr) {
-        super(lines, startIdx, endIdx, rootStr);
+    private DrumMeasure(List<String> lines, int startIdx, int  endIdx, String rootStr, boolean isFirstMeasure) {
+        super(lines, startIdx, endIdx, rootStr, isFirstMeasure);
     }
-    public static DrumMeasure getInstance(List<String> lines, int startIdx, int  endIdx, String rootStr) {
+    public static DrumMeasure getInstance(List<String> lines, int startIdx, int  endIdx, String rootStr, boolean isFirstMeasure) {
         if (Measure.isGuitar(lines)) {
-            return new DrumMeasure(lines, startIdx, endIdx, rootStr);
+            return new DrumMeasure(lines, startIdx, endIdx, rootStr, isFirstMeasure);
         }else {
             return null;
         }

@@ -27,62 +27,37 @@ public abstract class MeasureLine implements ScoreComponent {
         s = Patterns.removePositionStamp(s);
         this.name = getNameOf(s);
         this.Line = removeNameOf(s);  //removing the line name from the line
-        this.notes = this.getNotes();
+        this.getNotes();
 
     }
 
-    private List<Note> getNotes() {
-        List<Note> noteList = new ArrayList<Note>();
-
-        return noteList;
-    }
-
-    public ArrayList<String> calculateNoteDistance () {
-        ArrayList<String> temp = new ArrayList<>();
-        Info = new ArrayList<>();
-        int vertBarCounter = 0;
+    public void getNotes() {
         int dashCounter = 0;
         String noteString = null;
         for (int i = 1; i < Line.length(); i++) {
 
             if (Line.charAt(i) == '-') { //accounts for each instance of dash
                 if(noteString != null){
-                    Note.from(noteString, dashCounter, this.name);
                     this.notes.addAll(Note.from(noteString, dashCounter, this.name));
                     noteString = null;
                 } dashCounter++;
             } else if (Line.charAt(i) == '|') { //accounts for each instance of vertical bar
                 if(noteString != null){
-                    Note.from(noteString, dashCounter, this.name);
                     this.notes.addAll(Note.from(noteString, dashCounter, this.name));
                     noteString = null;
                 }
-                vertBarCounter++;
                 dashCounter = 0; //reset dash counter
             } else {
-                temp.add("" + Line.charAt(i)); //extracting info of note played at the instance played
                 if(noteString == null){
                     noteString = "";
                 }
                 noteString += Line.charAt(i);
-                String t = ""; //temp object
-                for (int j = 0; j < temp.size(); j++) {
-                    t = t + temp.get(j); //
-                }
-                t = vertBarCounter + ", " + t + ", " + dashCounter; //organizes info of note played at the instance played on the bar
-                Info.add(t); //storing into arraylist
-
-                temp.addAll(GuitarMeasureLine.getLineNames());
-                temp.addAll(DrumMeasureLine.getLineNames());
-                return temp;
             }
         }
         if(noteString != null) {
-            Note.from(noteString, dashCounter, this.name);
             this.notes.addAll(Note.from(noteString, dashCounter, this.name));
             noteString = null;
         }
-        return temp;
     }
 
 
