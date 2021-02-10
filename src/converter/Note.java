@@ -13,7 +13,9 @@ public abstract class Note implements ScoreComponent, Comparable {
     private int octave;
     private String key;
     private int duration;
+    public int fret;
     public Note(String lineName, int fret, int duration, int distanceToMeasureStart) {
+        this.fret = fret;
         int stringNumber = this.convertNameToNumber(lineName);
         this.octave = octave(stringNumber, fret);
         this.key = Note.key(stringNumber, fret);
