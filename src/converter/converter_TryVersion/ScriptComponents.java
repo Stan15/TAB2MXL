@@ -4,7 +4,7 @@ package converter.converter_TryVersion;
 //If it works well, we can use it later.
 
 public interface ScriptComponents {
-    String basicInfo();
+    String partwiseInfo();
     String defaultInfo();
     String partlistInfo();
     String partInfo();
