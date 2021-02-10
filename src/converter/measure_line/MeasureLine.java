@@ -42,31 +42,49 @@ public abstract class MeasureLine implements ScoreComponent {
         Info = new ArrayList<>();
         int vertBarCounter = 0;
         int dashCounter = 0;
-
+        String noteString = null;
         for (int i = 1; i < Line.length(); i++) {
 
             if (Line.charAt(i) == '-') { //accounts for each instance of dash
-                dashCounter++;
+                if(noteString != null){
+                    Note.from(noteString, dashCounter, this.name);
+                    this.notes.addAll(Note.from(noteString, dashCounter, this.name));
+                    noteString = null;
+                } dashCounter++;
             } else if (Line.charAt(i) == '|') { //accounts for each instance of vertical bar
+                if(noteString != null){
+                    Note.from(noteString, dashCounter, this.name);
+                    this.notes.addAll(Note.from(noteString, dashCounter, this.name));
+                    noteString = null;
+                }
                 vertBarCounter++;
                 dashCounter = 0; //reset dash counter
             } else {
                 temp.add("" + Line.charAt(i)); //extracting info of note played at the instance played
+                if(noteString == null){
+                    noteString = "";
+                }
+                noteString += Line.charAt(i);
                 String t = ""; //temp object
                 for (int j = 0; j < temp.size(); j++) {
                     t = t + temp.get(j); //
                 }
                 t = vertBarCounter + ", " + t + ", " + dashCounter; //organizes info of note played at the instance played on the bar
                 Info.add(t); //storing into arraylist
-                dashCounter = 0; //reset dash counter
 
                 temp.addAll(GuitarMeasureLine.getLineNames());
                 temp.addAll(DrumMeasureLine.getLineNames());
                 return temp;
             }
         }
+        if(noteString != null) {
+            Note.from(noteString, dashCounter, this.name);
+            this.notes.addAll(Note.from(noteString, dashCounter, this.name));
+            noteString = null;
+        }
         return temp;
     }
+
 
     //this gets all possible measure names for all measure types
     public static List<String> getAllLineNames() {
@@ -86,7 +104,10 @@ public abstract class MeasureLine implements ScoreComponent {
     }
 
     //E|----------|------------|
-    public static String removeNameOf(String line) {
+    public static String removeNameOf(String line) {//throws InvalidParameterValueException{
+        //if (line == null){
+        //    throw new InvalidParameterValueException();
+        //}
         Patterns patterns = new Patterns();
         String[] temp = line.split("^"+patterns.WhiteSpace+"*"+patterns.MeasureLineName+patterns.WhiteSpace+"*"+"\\|");
         if (temp.length>1) {
