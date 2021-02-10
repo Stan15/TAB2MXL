@@ -40,7 +40,8 @@ public abstract class MeasureLine implements ScoreComponent {
                 if(noteString != null){
                     this.notes.addAll(Note.from(noteString, dashCounter, this.name));
                     noteString = null;
-                } dashCounter++;
+                }
+                dashCounter++;
             } else if (Line.charAt(i) == '|') { //accounts for each instance of vertical bar
                 if(noteString != null){
                     this.notes.addAll(Note.from(noteString, dashCounter, this.name));
@@ -51,6 +52,7 @@ public abstract class MeasureLine implements ScoreComponent {
                 if(noteString == null){
                     noteString = "";
                 }
+                dashCounter++;
                 noteString += Line.charAt(i);
             }
         }
@@ -72,7 +74,7 @@ public abstract class MeasureLine implements ScoreComponent {
     //gets the measure name of this particular measure
     public static String getNameOf(String line) {
         Patterns patterns = new Patterns();
-        Pattern measureLineNamePttrn = Pattern.compile("^"+patterns.WhiteSpace+"*"+patterns.MeasureLineName);
+        Pattern measureLineNamePttrn = Pattern.compile("(?<=^\\|?)"+patterns.WhiteSpace+"*"+patterns.MeasureLineName);
         Matcher measureLineNameMatcher = measureLineNamePttrn.matcher(line);
         measureLineNameMatcher.find();
         return measureLineNameMatcher.group().strip();
