@@ -4,7 +4,7 @@ public class Note implements ScoreComponent {
     public static void main(String[] args) {
         System.out.println(pitchScript(2,13));
         //example
-    }
+    }//test
 
     //I made only pitch part for now.
     //reference: https://theacousticguitarist.com/all-notes-on-guitar/
