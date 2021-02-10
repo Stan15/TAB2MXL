@@ -20,9 +20,9 @@ public class guitarMeasureLineTester {
     }
     @Test
     void test2(){
-        String s2 = ("[1,5]|e|---12---6-4-|");
+        String s2 = ("[5,10]|B|-1-------1-1-1-1--|");
         MeasureLine measureLine = new GuitarMeasureLine(s2, 4, 4);
-        Integer[] expected = {12, 6, 4};
+        Integer[] expected = {1, 1, 1, 1, 1};
         for(int i = 0; i < measureLine.notes.size(); i++){
             Note note = measureLine.notes.get(i);
             assertEquals(note.fret, expected[i]);
@@ -30,9 +30,9 @@ public class guitarMeasureLineTester {
     }
     @Test
     void test3(){
-        String s3 = ("[1,5]|e|---12---6-4-|");
+        String s3 = ("[3,3]|D|-----------------------------28-|");
         MeasureLine measureLine = new GuitarMeasureLine(s3, 4, 4);
-        Integer[] expected = {12, 6, 4};
+        Integer[] expected = {28};
         for(int i = 0; i < measureLine.notes.size(); i++){
             Note note = measureLine.notes.get(i);
             assertEquals(note.fret, expected[i]);
