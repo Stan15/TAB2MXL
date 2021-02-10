@@ -15,13 +15,14 @@ public class AcousticGuitar {
     public AcousticGuitar(){}
 
     //I assumed this class receives ArrayList has whole bar per line as String.
-    //e.g) bars.get(0) = first line whole bar, like this. Whole one line is one element.
-    //|---------|---3------2--|---2-8---|
-    //|---------|---0---------|---------|
-    //|---------|-------------|---7-----|
-    //|---------|----------6--|-------0-|
-    //|-------0-|-------------|-1-------|
-    //|-------0-|---3---------|--10-----|
+    //e.g) bars.get(0) = first whole bar line, like this. Whole one line is one element.
+    //|---------|---3------2--|---2-8--------|
+    //|---------|---0---------|--------------|
+    //|---------|-------------|---7----------|
+    //|---------|----------6--|------------0-|
+    //|-------0-|-------------|-1------------|
+    //|-------0-|---3---------|--10----------|
+
     public AcousticGuitar(ArrayList<String> barsPerline){
         this.barsPerline = barsPerline;
         for(String bar: barsPerline){

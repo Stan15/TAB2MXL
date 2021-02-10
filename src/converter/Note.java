@@ -31,7 +31,7 @@ public class Note implements ScoreComponent {
     }
 
     //decide octave of note
-    private static int octave(int stringNumber, int fret) {
+    public static int octave(int stringNumber, int fret) {
         int octave;
         if(stringNumber == 6) {
             if(fret >= 0 && fret <= 7) {
