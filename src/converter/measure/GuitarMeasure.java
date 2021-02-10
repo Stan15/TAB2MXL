@@ -14,16 +14,16 @@ public class GuitarMeasure extends Measure {
     public int beats;
     public int beatType;
 
-    private GuitarMeasure(List<String> lines, int startIdx, int  endIdx, String rootStr) {
-        super(lines, startIdx, endIdx, rootStr);
+    private GuitarMeasure(List<String> lines, int startIdx, int  endIdx, String rootStr, boolean isFirstMeasure) {
+        super(lines, startIdx, endIdx, rootStr, isFirstMeasure);
         this.beats = 4;
         this.beatType = 4;
         this.measureLines = this.getMeasureLines();
     }
 
-    public static GuitarMeasure getInstance(List<String> lines, int startIdx, int  endIdx, String rootStr) {
+    public static GuitarMeasure getInstance(List<String> lines, int startIdx, int  endIdx, String rootStr, boolean isFirstMeasure) {
         if (Measure.isGuitar(lines)) {
-            return new GuitarMeasure(lines, startIdx, endIdx, rootStr);
+            return new GuitarMeasure(lines, startIdx, endIdx, rootStr, isFirstMeasure);
         }else {
             return null;
         }
@@ -59,7 +59,8 @@ public class GuitarMeasure extends Measure {
         StringBuilder measureXML = new StringBuilder();
         measureXML.append("<measure number=\""+Measure.measureNum+"\">\n");
         // TODO much later on, check the notes in all the measure lines for notes with the same duration and make a chord out of them. then
-        this.addAttributesXML(measureXML);
+        if (this.isFirstMeasure)
+            this.addAttributesXML(measureXML);
         this.addNotesXML(measureXML);
         measureXML.append("</measure>\n");
         return measureXML.toString();
@@ -119,7 +120,7 @@ public class GuitarMeasure extends Measure {
                 Note note = noteQueue.poll();
                 currentChord.add(note);
                 previousNote = note;
-            }while(noteQueue.peek().distanceToMeasureStart==previousNote.distanceToMeasureStart);
+            }while(!noteQueue.isEmpty() && noteQueue.peek().distanceToMeasureStart==previousNote.distanceToMeasureStart);
 
             //adding all chord notes to the measureXML
             for(int i=0; i<currentChord.size(); i++) {

@@ -24,13 +24,13 @@ public abstract class Note implements ScoreComponent, Comparable {
     public int convertNameToNumber(String lineName) {
         if (lineName.equals("e")) {
             return 1;
-        } else if (lineName.equals("A")) {
-            return 2;
-        } else if (lineName.equals("D")) {
-            return 3;
-        } else if (lineName.equals("G")) {
-            return 4;
         } else if (lineName.equals("B")) {
+            return 2;
+        } else if (lineName.equals("G")) {
+            return 3;
+        } else if (lineName.equals("D")) {
+            return 4;
+        } else if (lineName.equals("A")) {
             return 5;
         } else if (lineName.equals("E")) {
             return 6;
@@ -162,7 +162,7 @@ public abstract class Note implements ScoreComponent, Comparable {
         noteXML.append(this.duration);
         noteXML.append("</duration>\n");
 
-        noteXML.append("<note>\n");
+        noteXML.append("</note>\n");
 
         return noteXML.toString();
     }
