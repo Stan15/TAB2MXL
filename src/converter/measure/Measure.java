@@ -3,6 +3,7 @@ package converter.measure;
 import converter.ScoreComponent;
 import converter.measure_line.DrumMeasureLine;
 import converter.measure_line.GuitarMeasureLine;
+import converter.measure_line.InvalidParameterValueException;
 import converter.measure_line.MeasureLine;
 import parser.Patterns;
 
@@ -19,7 +20,7 @@ public abstract class Measure implements ScoreComponent {
     protected boolean isFirstMeasure;
     public static int measureNum = 0;
     
-    public Measure(List<String> lines, int startIdx, int endIdx, String rootStr, boolean isFirstMeasure) {
+    public Measure(List<String> lines, int startIdx, int endIdx, String rootStr, boolean isFirstMeasure) throws InvalidParameterValueException {
         this.lines = lines;
         this.startIdx = startIdx;
         this.endIdx = endIdx;
@@ -28,7 +29,7 @@ public abstract class Measure implements ScoreComponent {
         this.measureLines = getMeasureLines();
     }
 
-    public List<MeasureLine> getMeasureLines() {
+    public List<MeasureLine> getMeasureLines() throws InvalidParameterValueException {
         List<MeasureLine> measureLines = new ArrayList<>();
         for (String line : this.lines) {
             if (MeasureLine.isGuitar(line)) {
@@ -46,7 +47,7 @@ public abstract class Measure implements ScoreComponent {
      *                    where startIdx and endIdx is the start and end index of this measure(position stamp) in the tablature string from which they originated.
      * @return true if the input measureLines are all guitar measure lines
      */
-    public static boolean isGuitar(List<String> measureLines) {
+    public static boolean isGuitar(List<String> measureLines) throws InvalidParameterValueException {
         for (String line : measureLines) {
             line = Patterns.removePositionStamp(line);
             if (!MeasureLine.isGuitar(line))
@@ -61,7 +62,7 @@ public abstract class Measure implements ScoreComponent {
      *                     where startIdx and endIdx is the start and end index of this measure(position stamp) in the tablature string from which they originated.
      * @return true if the input measureLines are all guitar measure lines
      */
-    public static boolean isDrum(List<String> measureLines) {
+    public static boolean isDrum(List<String> measureLines) throws InvalidParameterValueException {
         for (String line : measureLines) {
             line = Patterns.removePositionStamp(line);
             if (!MeasureLine.isDrum(line))

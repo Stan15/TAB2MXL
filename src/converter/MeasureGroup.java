@@ -3,6 +3,7 @@ package converter;
 import converter.measure.DrumMeasure;
 import converter.measure.GuitarMeasure;
 import converter.measure.Measure;
+import converter.measure_line.InvalidParameterValueException;
 import converter.measure_line.MeasureLine;
 import parser.InvalidMeasureFormatException;
 import parser.Patterns;
@@ -39,13 +40,13 @@ public class MeasureGroup implements ScoreComponent{
         this.rootString = rootString;
         try {
             this.measures = this.getMeasures();
-        }catch(InvalidMeasureFormatException e) {
+        }catch(InvalidMeasureFormatException | InvalidParameterValueException e) {
             e.printStackTrace();
             // TODO prompt the user to reedit the line
         }
     }
 
-    private List<Measure> getMeasures() throws InvalidMeasureFormatException {
+    private List<Measure> getMeasures() throws InvalidMeasureFormatException, InvalidParameterValueException {
         //this holds a list of measure where each measure is represented as a list of the lines which make up the group.
         List<List<String>> measuresStrList = new ArrayList<>();
 
@@ -160,7 +161,11 @@ public class MeasureGroup implements ScoreComponent{
             for (int measureNum=0; measureNum<measures.size(); measureNum++) {
                 //print the measureName only for the first measure
                 if (measureNum==0) {
-                   str += MeasureLine.getNameOf(measures.get(measureNum)[measureLineNum]) + "|";
+                    try {
+                        str += MeasureLine.getNameOf(measures.get(measureNum)[measureLineNum]) + "|";
+                    } catch (InvalidParameterValueException e) {
+                        e.printStackTrace();
+                    }
                 }
                 Pattern measureContentPttrn = Pattern.compile(patterns.MeasureInsides);
                 Matcher measureContentMatcher = measureContentPttrn.matcher(measures.get(measureNum)[measureLineNum]);

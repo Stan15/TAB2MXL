@@ -10,7 +10,7 @@ public class GuitarMeasureLine extends MeasureLine {
     public int beats;
     public int beatType;
 
-    public GuitarMeasureLine(String line, int beats, int beatType) {
+    public GuitarMeasureLine(String line, int beats, int beatType) throws InvalidParameterValueException {
         super(line);
         this.beats = beats;
         this.beatType = beatType;

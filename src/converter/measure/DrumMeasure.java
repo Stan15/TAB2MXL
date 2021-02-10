@@ -1,16 +1,17 @@
 package converter.measure;
 
 import converter.measure_line.DrumMeasureLine;
+import converter.measure_line.InvalidParameterValueException;
 import converter.measure_line.MeasureLine;
 
 import java.util.List;
 
 public class DrumMeasure extends Measure {
     private List<MeasureLine> measureLines;
-    private DrumMeasure(List<String> lines, int startIdx, int  endIdx, String rootStr, boolean isFirstMeasure) {
+    private DrumMeasure(List<String> lines, int startIdx, int  endIdx, String rootStr, boolean isFirstMeasure) throws InvalidParameterValueException {
         super(lines, startIdx, endIdx, rootStr, isFirstMeasure);
     }
-    public static DrumMeasure getInstance(List<String> lines, int startIdx, int  endIdx, String rootStr, boolean isFirstMeasure) {
+    public static DrumMeasure getInstance(List<String> lines, int startIdx, int  endIdx, String rootStr, boolean isFirstMeasure) throws InvalidParameterValueException {
         if (Measure.isGuitar(lines)) {
             return new DrumMeasure(lines, startIdx, endIdx, rootStr, isFirstMeasure);
         }else {

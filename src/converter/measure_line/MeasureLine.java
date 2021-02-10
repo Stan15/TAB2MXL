@@ -17,7 +17,7 @@ public abstract class MeasureLine implements ScoreComponent {
     private int startIdx;
     private int endIdx;
 
-    public MeasureLine(String s) {
+    public MeasureLine(String s) throws InvalidParameterValueException {
         //each line string "s" starts with a position stamp to at what index it is in the root string
         // (the tablature string we are converting). So it is in the form [startIdx,endIdx]measureLineInfo
         Integer[] position = Patterns.getPositionFromStamp(s);
@@ -70,7 +70,10 @@ public abstract class MeasureLine implements ScoreComponent {
     }
 
     //gets the measure name of this particular measure
-    public static String getNameOf(String line) {
+    public static String getNameOf(String line) throws InvalidParameterValueException {
+        if ((line == null) || (line == "")){
+            throw new InvalidParameterValueException();
+        }
         Patterns patterns = new Patterns();
         Pattern measureLineNamePttrn = Pattern.compile("^"+patterns.WhiteSpace+"*"+patterns.MeasureLineName);
         Matcher measureLineNameMatcher = measureLineNamePttrn.matcher(line);
@@ -79,10 +82,10 @@ public abstract class MeasureLine implements ScoreComponent {
     }
 
     //E|----------|------------|
-    public static String removeNameOf(String line) {//throws InvalidParameterValueException{
-        //if (line == null){
-        //    throw new InvalidParameterValueException();
-        //}
+    public static String removeNameOf(String line) throws InvalidParameterValueException{
+        if ((line == null) || (line == "")){
+            throw new InvalidParameterValueException();
+        }
         Patterns patterns = new Patterns();
         String[] temp = line.split("^"+patterns.WhiteSpace+"*"+patterns.MeasureLineName+patterns.WhiteSpace+"*"+"\\|");
         if (temp.length>1) {
@@ -102,7 +105,7 @@ public abstract class MeasureLine implements ScoreComponent {
         this.name = e;
     }
 
-    public static boolean isDrum(String line) {
+    public static boolean isDrum(String line) throws InvalidParameterValueException {
         line = Patterns.removePositionStamp(line);
         String name = MeasureLine.getNameOf(line);
         if (DrumMeasureLine.getLineNames().contains(name))
@@ -110,7 +113,7 @@ public abstract class MeasureLine implements ScoreComponent {
         return false;
     }
 
-    public static boolean isGuitar(String line) {
+    public static boolean isGuitar(String line) throws InvalidParameterValueException {
         line = Patterns.removePositionStamp(line);
         String name = MeasureLine.getNameOf(line);
         if (GuitarMeasureLine.getLineNames().contains(name))

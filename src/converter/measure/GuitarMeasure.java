@@ -2,6 +2,7 @@ package converter.measure;
 
 import converter.Note;
 import converter.measure_line.GuitarMeasureLine;
+import converter.measure_line.InvalidParameterValueException;
 import converter.measure_line.MeasureLine;
 
 import java.util.ArrayList;
@@ -14,14 +15,14 @@ public class GuitarMeasure extends Measure {
     public int beats;
     public int beatType;
 
-    private GuitarMeasure(List<String> lines, int startIdx, int  endIdx, String rootStr, boolean isFirstMeasure) {
+    private GuitarMeasure(List<String> lines, int startIdx, int  endIdx, String rootStr, boolean isFirstMeasure) throws InvalidParameterValueException {
         super(lines, startIdx, endIdx, rootStr, isFirstMeasure);
         this.beats = 4;
         this.beatType = 4;
         this.measureLines = this.getMeasureLines();
     }
 
-    public static GuitarMeasure getInstance(List<String> lines, int startIdx, int  endIdx, String rootStr, boolean isFirstMeasure) {
+    public static GuitarMeasure getInstance(List<String> lines, int startIdx, int  endIdx, String rootStr, boolean isFirstMeasure) throws InvalidParameterValueException {
         if (Measure.isGuitar(lines)) {
             return new GuitarMeasure(lines, startIdx, endIdx, rootStr, isFirstMeasure);
         }else {

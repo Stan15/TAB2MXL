@@ -9,7 +9,7 @@ import java.util.List;
 public class DrumMeasureLine extends MeasureLine {
     protected List<Beat> beats = new ArrayList<>();
 
-    public DrumMeasureLine(String line) {
+    public DrumMeasureLine(String line) throws InvalidParameterValueException {
         super(line);
     }
 
