@@ -1,18 +1,41 @@
 package converter;
 
-public class Note implements ScoreComponent {
+import java.util.ArrayList;
+import java.util.List;
+
+public abstract class Note implements ScoreComponent, Comparable {
+    public int distanceToMeasureStart;
     public static void main(String[] args) {
-        Note note = new Note(2, 13, 1);
-        System.out.println(note.toXML());
+        Note note = new GuitarNote("e", 13, 1, 5);
+        System.out.println(note.toXML(true));
     }
 
     private int octave;
     private String key;
     private int duration;
-    public Note(int stringNumber, int fret, int duration) {
+    public Note(String lineName, int fret, int duration, int distanceToMeasureStart) {
+        int stringNumber = this.convertNameToNumber(lineName);
         this.octave = octave(stringNumber, fret);
         this.key = Note.key(stringNumber, fret);
         this.duration = duration;
+        this.distanceToMeasureStart = distanceToMeasureStart;
+    }
+
+    public int convertNameToNumber(String lineName) {
+        if (lineName.equals("e")) {
+            return 1;
+        } else if (lineName.equals("A")) {
+            return 2;
+        } else if (lineName.equals("D")) {
+            return 3;
+        } else if (lineName.equals("G")) {
+            return 4;
+        } else if (lineName.equals("B")) {
+            return 5;
+        } else if (lineName.equals("E")) {
+            return 6;
+        }
+        return 0;
     }
 
     //I made only pitch part for now.
@@ -33,8 +56,9 @@ public class Note implements ScoreComponent {
         return "<pitch>\n"
                 + stepString
                 + octaveString
-                + "</pitch>";
+                + "</pitch>\n";
     }
+
 
     //decide octave of note
     private static int octave(int stringNumber, int fret) {
@@ -127,16 +151,37 @@ public class Note implements ScoreComponent {
         return false;
     }
 
-    @Override
-    public String toXML() {
-        return "<note>\n" +
-                    pitchScript()+"\n" +
-                    "<duration>"+this.duration+"</duration>"+
-                    getTie()+
-                "</note>";
+    public String toXML(boolean startsWithPrevious) {
+        StringBuilder noteXML = new StringBuilder();
+        noteXML.append("<note>\n");
+
+        if (startsWithPrevious)
+            noteXML.append("<chord/>\n");
+        noteXML.append(pitchScript());
+        noteXML.append("<duration>");
+        noteXML.append(this.duration);
+        noteXML.append("</duration>\n");
+
+        noteXML.append("<note>\n");
+
+        return noteXML.toString();
     }
 
-    private String getTie() {
-        return "";
+    public void setTie() {
+        return;
     }
+
+    @Override
+    public int compareTo(Object o) {
+        Note other = (Note) o;
+        return other.distanceToMeasureStart-this.distanceToMeasureStart;
+    }
+
+    //Creates a new arraylist of Note objects from stuff like 12h3 or (6\2) or (2)(7h1)
+    public static List<Note> from(String noteString, int distanceFromMeasureStart, String lineName) {
+        ArrayList<Note> noteList = new ArrayList<>();
+        noteList.add(new GuitarNote(lineName, Integer.valueOf(noteString), 1, distanceFromMeasureStart));
+        return noteList;
+    }
+
 }

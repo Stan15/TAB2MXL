@@ -1,5 +1,6 @@
 package converter.measure_line;
 
+import converter.Note;
 import converter.ScoreComponent;
 import parser.Patterns;
 
@@ -9,7 +10,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public abstract class MeasureLine implements ScoreComponent {
-
+    public List<Note> notes = new ArrayList<>();
     private ArrayList<Object> Info;
     protected String Line;
     protected String name;
@@ -26,20 +27,14 @@ public abstract class MeasureLine implements ScoreComponent {
         s = Patterns.removePositionStamp(s);
         this.name = getNameOf(s);
         this.Line = removeNameOf(s);  //removing the line name from the line
+        this.notes = this.getNotes();
 
     }
 
-    public String getName() {
-        return this.name;
-    }
+    private List<Note> getNotes() {
+        List<Note> noteList = new ArrayList<Note>();
 
-
-    public static boolean isDrum(String measureLine) {
-        return false;
-    }
-
-    public static boolean isGuitar(String line) {
-        return true;
+        return noteList;
     }
 
     public ArrayList<String> calculateNoteDistance () {
@@ -47,31 +42,49 @@ public abstract class MeasureLine implements ScoreComponent {
         Info = new ArrayList<>();
         int vertBarCounter = 0;
         int dashCounter = 0;
-
+        String noteString = null;
         for (int i = 1; i < Line.length(); i++) {
 
             if (Line.charAt(i) == '-') { //accounts for each instance of dash
-                dashCounter++;
+                if(noteString != null){
+                    Note.from(noteString, dashCounter, this.name);
+                    this.notes.addAll(Note.from(noteString, dashCounter, this.name));
+                    noteString = null;
+                } dashCounter++;
             } else if (Line.charAt(i) == '|') { //accounts for each instance of vertical bar
+                if(noteString != null){
+                    Note.from(noteString, dashCounter, this.name);
+                    this.notes.addAll(Note.from(noteString, dashCounter, this.name));
+                    noteString = null;
+                }
                 vertBarCounter++;
                 dashCounter = 0; //reset dash counter
             } else {
                 temp.add("" + Line.charAt(i)); //extracting info of note played at the instance played
+                if(noteString == null){
+                    noteString = "";
+                }
+                noteString += Line.charAt(i);
                 String t = ""; //temp object
                 for (int j = 0; j < temp.size(); j++) {
                     t = t + temp.get(j); //
                 }
                 t = vertBarCounter + ", " + t + ", " + dashCounter; //organizes info of note played at the instance played on the bar
                 Info.add(t); //storing into arraylist
-                dashCounter = 0; //reset dash counter
 
                 temp.addAll(GuitarMeasureLine.getLineNames());
                 temp.addAll(DrumMeasureLine.getLineNames());
                 return temp;
             }
         }
+        if(noteString != null) {
+            Note.from(noteString, dashCounter, this.name);
+            this.notes.addAll(Note.from(noteString, dashCounter, this.name));
+            noteString = null;
+        }
         return temp;
     }
+
 
     //this gets all possible measure names for all measure types
     public static List<String> getAllLineNames() {
@@ -90,8 +103,11 @@ public abstract class MeasureLine implements ScoreComponent {
         return measureLineNameMatcher.group().strip();
     }
 
-
-    public static String removeNameOf(String line) {
+    //E|----------|------------|
+    public static String removeNameOf(String line) {//throws InvalidParameterValueException{
+        //if (line == null){
+        //    throw new InvalidParameterValueException();
+        //}
         Patterns patterns = new Patterns();
         String[] temp = line.split("^"+patterns.WhiteSpace+"*"+patterns.MeasureLineName+patterns.WhiteSpace+"*"+"\\|");
         if (temp.length>1) {
@@ -109,5 +125,25 @@ public abstract class MeasureLine implements ScoreComponent {
 
     public void setName(String e) {
         this.name = e;
+    }
+
+    public static boolean isDrum(String line) {
+        line = Patterns.removePositionStamp(line);
+        String name = MeasureLine.getNameOf(line);
+        if (DrumMeasureLine.getLineNames().contains(name))
+            return true;
+        return false;
+    }
+
+    public static boolean isGuitar(String line) {
+        line = Patterns.removePositionStamp(line);
+        String name = MeasureLine.getNameOf(line);
+        if (GuitarMeasureLine.getLineNames().contains(name))
+            return true;
+        return false;
+    }
+
+    public String getName() {
+        return this.name;
     }
 }

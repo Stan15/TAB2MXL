@@ -30,7 +30,6 @@ public class DrumMeasure extends Measure {
         return true;
     }
 
-    @Override
     public String toXML() {
         return null;
     }

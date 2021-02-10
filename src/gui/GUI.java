@@ -12,12 +12,11 @@ import javafx.scene.layout.VBox;
 
 
 public class GUI extends Application {
-	//some change on develop branch
-	//I am making a change to the standev branch---
+	//sdgauduifhaisdhfiahsiofhd
 	@Override
 	public void start(Stage primaryStage) {
 		try {
-			VBox root = new VBox(); //testchange
+			VBox root = new VBox();
 			root.setId("root");
 			Scene scene = new Scene(root,600,480);
 			scene.getStylesheets().add(getClass().getResource("application.css").toExternalForm());
