@@ -8,7 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
+//change
 public abstract class MeasureLine implements ScoreComponent {
     public List<Note> notes = new ArrayList<>();
     private ArrayList<Object> Info;
