@@ -1,11 +1,8 @@
 package converter.measure_line;
 
-import converter.Note;
-
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-
+//wnduhwubwubeuwb
 public class GuitarMeasureLine extends MeasureLine {
     public int beats;
     public int beatType;
