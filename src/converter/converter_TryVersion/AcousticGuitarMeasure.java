@@ -1,8 +1,16 @@
 package converter.converter_TryVersion;
 
-public class AcousticGuitarMeasure extends AcousticGuitar{
-    public AcousticGuitarMeasure(){}
-    public AcousticGuitarMeasure(String measure){
+import java.util.ArrayList;
+import java.util.HashMap;
 
+public class AcousticGuitarMeasure{
+    private int measureNum;
+    public AcousticGuitarMeasure(){}
+    public AcousticGuitarMeasure(int measureNum, ArrayList<String> measureInfo){
+        this.measureNum = measureNum;
+    }
+
+    public String makeScript(){
+        return "";
     }
 }
