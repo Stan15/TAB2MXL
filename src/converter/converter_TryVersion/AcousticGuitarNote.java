@@ -2,29 +2,9 @@ package converter.converter_TryVersion;
 
 import converter.Note;
 
-public class AcousticGuitarNote extends AcousticGuitarMeasure{
+public class AcousticGuitarNote{
 
-    public static String pitchScript(int stringNumber, int fret) {
-
-//        int octave = Note.octave(stringNumber, fret);
-//        String key = Note.key(stringNumber, fret);
-//
-//        String octaveString = "<octave>" + octave + "</octave>\n";
-//        String stepString;
-//        if(!key.contains("#")) {
-//            stepString = "<step>" + key + "</step>\n";
-//        }
-//        else {
-//            stepString = "<step>" + key.charAt(0) + "</step>\n"
-//                    + "<alter>" + 1 + "</alter>\n";
-//            //In musicxml, # is expressed as <alter>1</alter>
-//        }
-//
-//        return "<pitch>\n"
-//                + stepString
-//                + octaveString
-//                + "</pitch>";
-        return null;
+    public AcousticGuitarNote(int stringNumber, String notation) {
     }
 
     //decide octave of note
