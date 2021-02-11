@@ -1,8 +1,5 @@
 package converter.converter_TryVersion;
 
-import converter.measure.GuitarMeasure;
-
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.HashMap;
 
