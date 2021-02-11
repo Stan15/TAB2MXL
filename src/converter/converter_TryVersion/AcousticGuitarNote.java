@@ -5,6 +5,7 @@ import converter.Note;
 public class AcousticGuitarNote extends AcousticGuitarMeasure{
 
     public static String pitchScript(int stringNumber, int fret) {
+
         int octave = Note.octave(stringNumber, fret);
         String key = Note.key(stringNumber, fret);
 
