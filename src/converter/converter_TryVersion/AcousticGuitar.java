@@ -5,6 +5,7 @@ import java.util.HashMap;
 
 public class AcousticGuitar {
     protected int measureNumber;
+    protected int lastMeasureNumber;
     protected String instrumentName;
     protected HashMap<Integer, ArrayList<String>> measureInfoWithNumber;
     protected ArrayList<AcousticGuitarMeasure> measures;
@@ -73,6 +74,8 @@ public class AcousticGuitar {
             AcousticGuitarMeasure measureClass = new AcousticGuitarMeasure(i + 1, this.measureInfoWithNumber.get(i + 1));
             this.measures.add(measureClass);
         }
+
+        this.lastMeasureNumber = measures.size();
 
     }
     private ArrayList<String> splitByline(String wholeLine){
