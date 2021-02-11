@@ -5,7 +5,6 @@ import converter.Note;
 public class AcousticGuitarNote{
 
     public AcousticGuitarNote(int stringNumber, String notation) {
-
     }
 
     //decide octave of note
