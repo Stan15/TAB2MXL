@@ -3,13 +3,15 @@ package converter.converter_TryVersion;
 import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Queue;
 
 public class AcousticGuitarMeasure extends AcousticGuitar{
 
     private int measureNum;
-    ArrayList<String> measureInfo;
-    ArrayList<AcousticGuitarNote> notes;
-    private final int DEFAULT_DIVISION = 2;
+    private ArrayList<String> measureInfo;
+    private ArrayList<AcousticGuitarNote> notes;
+    private String[][] notesBox = new String[6][16];
+    private final int DEFAULT_DIVISION = 4;
     private final int DEFAULT_BEATS = 4;
     private final int DEFAULT_BEAT_TYPE = 4;
 
@@ -17,6 +19,40 @@ public class AcousticGuitarMeasure extends AcousticGuitar{
         this.measureNum = measureNum;
         this.measureInfo = measureInfo;
         this.notes = new ArrayList<>();
+        for(int i = 0; i < measureInfo.size(); i++){
+            String eachStringLine = measureInfo.get(i);
+            storeNotes(eachStringLine, i);
+        }
+    }
+
+    public static void main(String[] args) {
+        String bbb = "------23---3---";
+        System.out.println(bbb.indexOf("23"));
+        String[] aa = bbb.split("[-]");
+        for(String a : aa){
+            System.out.println(a);
+        }
+    }
+
+    private void storeNotes(String eachStringLine, int stringNum){
+        int totalLength = eachStringLine.length();
+        String[] splitChar = eachStringLine.split("[-]");
+        ArrayList<String> notations = new ArrayList<>();
+        for(String notation : splitChar){
+            if(!notation.equals("")){
+                notations.add(notation);
+            }
+        }
+        for(String notation : notations){
+            int index = eachStringLine.indexOf(notation);
+            double position = index + 1 / totalLength;
+            for(int i = 0; i < 16; i++){
+                if(index <= i + 1 / 16) {
+                    notesBox[stringNum][i] = notation;
+                    break;
+                }
+            }
+        }
     }
 
     private String makeAttributes(){
