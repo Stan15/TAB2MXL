@@ -139,7 +139,7 @@ public class AcousticGuitarMeasure extends AcousticGuitar{
                 script += AcousticGuitarNote.makeChordNoteScript(notations);
             }
         }
-        System.out.println(measureNum + " " + lastMeasureNumber);
+
         if(measureNum == lastMeasureNumber){
             script += "<barline location=\"right\">\n" +
                     "<bar-style>light-heavy</bar-style>\n" +
