@@ -5,7 +5,7 @@ import java.util.HashMap;
 
 public class AcousticGuitar {
     protected int measureNumber;
-    protected int lastMeasureNumber;
+    protected static int lastMeasureNumber;
     protected String instrumentName;
     protected HashMap<Integer, ArrayList<String>> measureInfoWithNumber;
     protected ArrayList<AcousticGuitarMeasure> measures;
