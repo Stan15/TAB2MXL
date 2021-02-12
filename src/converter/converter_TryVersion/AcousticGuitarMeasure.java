@@ -39,9 +39,9 @@ public class AcousticGuitarMeasure extends AcousticGuitar{
 
         for(String notation : notations){
             int index = temp.indexOf(notation);
-            double position = index + 1 / totalLength;
+            double position = (double) (index + 1) / (double) totalLength;
             for(int i = 0; i < 16; i++){
-                if(index <= i + 1 / 16) {
+                if(position <= (double) (i + 1) / 16) {
                     if(notesBox[stringNum][i] != null){
                         notesBox[stringNum][i + 1] = notation;
                         break;
