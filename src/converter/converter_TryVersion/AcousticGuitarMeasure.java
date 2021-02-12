@@ -3,6 +3,7 @@ package converter.converter_TryVersion;
 import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Queue;
 
 public class AcousticGuitarMeasure extends AcousticGuitar{
@@ -25,33 +26,43 @@ public class AcousticGuitarMeasure extends AcousticGuitar{
         }
     }
 
-    public static void main(String[] args) {
-        String bbb = "------23---3---";
-        System.out.println(bbb.indexOf("23"));
-        String[] aa = bbb.split("[-]");
-        for(String a : aa){
-            System.out.println(a);
-        }
-    }
-
     private void storeNotes(String eachStringLine, int stringNum){
-        int totalLength = eachStringLine.length();
-        String[] splitChar = eachStringLine.split("[-]");
+        String temp = eachStringLine;
+        int totalLength = temp.length();
+        String[] splitChar = temp.split("[-]");
         ArrayList<String> notations = new ArrayList<>();
         for(String notation : splitChar){
             if(!notation.equals("")){
                 notations.add(notation);
             }
         }
+
         for(String notation : notations){
-            int index = eachStringLine.indexOf(notation);
+            int index = temp.indexOf(notation);
             double position = index + 1 / totalLength;
             for(int i = 0; i < 16; i++){
                 if(index <= i + 1 / 16) {
-                    notesBox[stringNum][i] = notation;
-                    break;
+                    if(notesBox[stringNum][i] != null){
+                        notesBox[stringNum][i + 1] = notation;
+                        break;
+                    }
+                    else if(notesBox[stringNum][i] != null && notesBox[stringNum][i + 1] != null){
+                        notesBox[stringNum][i - 1] = notation;
+                        break;
+                    }
+                    else{
+                        notesBox[stringNum][i] = notation;
+                        break;
+                    }
                 }
             }
+
+            StringBuilder builder = new StringBuilder(temp);
+            for(int i = index; i < index + notation.length(); i++){
+                builder.setCharAt(i,'-');
+            }
+
+            temp = builder.toString();
         }
     }
 
@@ -104,6 +115,29 @@ public class AcousticGuitarMeasure extends AcousticGuitar{
         String script = "<measure number=\"" + measureNum + "\">\n";
         if(measureNum == 1){
             script += makeAttributes();
+        }
+
+        for(int i = 0; i < 16; i++){
+            HashMap<Integer, String> notations = new HashMap<>();
+            for(int j = 0; j < 6; j++){
+                if(notesBox[j][i] != null){
+                    notations.put(j + 1, notesBox[j][i]);
+                } //string num, notation
+            }
+
+            if(notations.isEmpty()){
+                script += AcousticGuitarNote.makeRestNoteScript();
+            }
+
+            else if(notations.size() == 1){
+                Iterator iter = notations.keySet().iterator();
+                int key = (int) iter.next();
+                script += AcousticGuitarNote.makeNoteScript(key, notations.get(key));
+            }
+
+            else{
+                script += AcousticGuitarNote.makeChordNoteScript(notations);
+            }
         }
 
         if(measureNum == lastMeasureNumber){

@@ -16,19 +16,23 @@ public class AcousticGuitar {
     public AcousticGuitar(){}
 
     public static void main(String[] args) {
-        String bbb = "|---------|---3------2--|---2-8--------|\n" +
-                "|---------|---0---------|--------------|\n" +
-                "|---------|-------------|---7----------|\n" +
-                "|---------|----------6--|------------0-|\n" +
-                "|-------0-|-------------|-1------------|\n" +
-                "|-------0-|---3---------|--10----------|\n";
-        ArrayList<String> cc = new ArrayList<>();
-        cc.add(bbb);
-        AcousticGuitar a = new AcousticGuitar(cc);
-        System.out.println(a.measureInfoWithNumber.get(1));
-        System.out.println(a.measureInfoWithNumber.get(2));
-        System.out.println(a.measureInfoWithNumber.get(3));
-        //each measure info from guitar string 1 to 6.
+        ArrayList<String> o = new ArrayList<>();
+        o.add("|-----------0-----|-0----------------|\n" +
+                "|---------0---0---|-0---------9------|\n" +
+                "|-------1-------1-|-1-------7--------|\n" +
+                "|-----2-----------|-2---7------------|\n" +
+                "|---2-------------|-2----------------|\n" +
+                "|-0---------------|-0----------------|\n");
+        o.add("|-----------------|-0----------------|\n" +
+                "|-----3---0-------|-0---------9------|\n" +
+                "|-------1---------|-1-------7--------|\n" +
+                "|-----2-----------|-2---7------------|\n" +
+                "|-----2-----------|-2----------------|\n" +
+                "|-0---------------|-0----------------|\n");
+
+        AcousticGuitar ex = new AcousticGuitar(o);
+        String aa = ex.makeScript();
+        System.out.println(aa);
     }// example
 
     //I assumed this class receives ArrayList has whole bar per line as String.

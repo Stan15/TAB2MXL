@@ -2,9 +2,99 @@ package converter.converter_TryVersion;
 
 import converter.Note;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.regex.Pattern;
+
 public class AcousticGuitarNote{
 
-    public AcousticGuitarNote(int stringNumber, String notation) {
+    public static String makeNoteScript(int stringNumber, String notation){
+
+        String result = "<note>\n" + scripting(stringNumber, notation) + "</note>\n";
+
+        return result;
+    }
+
+    public static String makeRestNoteScript(){
+        String result = "<note>\n" +
+                "<rest/>\n" +
+                "<duration>1</duration>\n" +
+                "<voice>1</voice>\n" +
+                "<type>16th</type>\n" +
+                "</note>\n";
+        return result;
+    }
+
+
+    public static String makeChordNoteScript(HashMap<Integer, String> notations){
+
+        Iterator iter = notations.keySet().iterator();
+        ArrayList<Integer> sortedKey = new ArrayList<>(notations.keySet());
+        Collections.sort(sortedKey);
+
+        String result = "";
+        for(int i = sortedKey.size() - 1; i >= 0; i--){
+            String notation = notations.get(sortedKey.get(i));
+            if(i == sortedKey.size() - 1){
+                result = result + "<note>\n" + scripting(sortedKey.get(i), notation) + "</note>\n";
+            }
+            else{
+                result += "<note>\n" +
+                        "<chord/>\n";
+                result = result + scripting(sortedKey.get(i), notation) + "</note>\n";
+            }
+        }
+        return result;
+    }
+
+    //https://guitargearfinder.com/lessons/how-to-read-guitar-tab/
+    private static String scripting(int stringNumber, String notation){
+
+        String result = "";
+
+        if(Pattern.matches(("^[0-9]*$"), notation)){
+            int fretNum = Integer.valueOf(notation);
+            result += AcousticGuitarNote.pitchScript(octave(stringNumber, fretNum),key(stringNumber, fretNum));
+            result += "<duration>1</duration>\n" +
+                    "<voice>1</voice>\n" +
+                    "<type>16th</type>\n";
+            result += "<notations>\n" +
+                    "<technical>\n" +
+                    "<string>" + stringNumber + "</string>\n" +
+                    "<fret>" + fretNum + "</fret>\n" +
+                    "</technical>\n" +
+                    "</notations>\n";
+        }
+        else if(notation.equals("x") || notation.equals("X")){
+        }
+        else if(Pattern.matches(("^[[0-9]*[phPH][0-9]]*"), notation)){
+        }
+        else if(Pattern.matches(("^[[(][0-9]*[)]]"), notation)){
+        }
+        else{
+        }
+        return result;
+    }
+
+    private static String pitchScript(int octave, String key) {
+
+        String octaveString = "<octave>" + octave + "</octave>\n";
+        String stepString;
+        if(!key.contains("#")) {
+            stepString = "<step>" + key + "</step>\n";
+        }
+        else {
+            stepString = "<step>" + key.charAt(0) + "</step>\n"
+                    + "<alter>" + 1 + "</alter>\n";
+            //In musicxml, # is expressed as <alter>1</alter>
+        }
+
+        return "<pitch>\n"
+                + stepString
+                + octaveString
+                + "</pitch>\n";
     }
 
     //decide octave of note
@@ -70,9 +160,9 @@ public class AcousticGuitarNote{
         return octave;
     }
 
-    //decide key of note
-    public static String key(int stringNumber, int fret) {
+    private static String key(int stringNumber, int fret) {
         String[] keys = {"C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B"};
+
         if(stringNumber == 6) {
             return keys[(fret + 4) % 12];
         }
