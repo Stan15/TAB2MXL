@@ -1,47 +1,80 @@
-package converter;
+package converter.converter_TryVersion;
 
 import java.util.ArrayList;
-import java.util.List;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.regex.Pattern;
 
-public abstract class Note implements ScoreComponent, Comparable {
-    public int distanceToMeasureStart;
-    public static void main(String[] args) {
-        Note note = new GuitarNote("e", 13, 1, 5);
-        System.out.println(note.toXML(true));
+public class AcousticGuitarNote{
+
+    public static String makeNoteScript(int stringNumber, String notation){
+
+        return "<note>\n" + scripting(stringNumber, notation) + "</note>\n";
     }
 
-    private int octave;
-    private String key;
-    private int duration;
-    public Note(String lineName, int fret, int duration, int distanceToMeasureStart) {
-        int stringNumber = this.convertNameToNumber(lineName);
-        this.octave = octave(stringNumber, fret);
-        this.key = Note.key(stringNumber, fret);
-        this.duration = duration;
-        this.distanceToMeasureStart = distanceToMeasureStart;
+    public static String makeRestNoteScript(){
+        return "<note>\n" +
+                "<rest/>\n" +
+                "<duration>1</duration>\n" +
+                "<voice>1</voice>\n" +
+                "<type>16th</type>\n" +
+                "</note>\n";
     }
 
-    public int convertNameToNumber(String lineName) {
-        if (lineName.equals("e")) {
-            return 1;
-        } else if (lineName.equals("B")) {
-            return 2;
-        } else if (lineName.equals("G")) {
-            return 3;
-        } else if (lineName.equals("D")) {
-            return 4;
-        } else if (lineName.equals("A")) {
-            return 5;
-        } else if (lineName.equals("E")) {
-            return 6;
+
+    public static String makeChordNoteScript(HashMap<Integer, String> notations){
+
+        Iterator<Integer> iter = notations.keySet().iterator();
+        ArrayList<Integer> sortedKey = new ArrayList<>(notations.keySet());
+        Collections.sort(sortedKey);
+
+        String result = "";
+        for(int i = sortedKey.size() - 1; i >= 0; i--){
+            String notation = notations.get(sortedKey.get(i));
+            if(i == sortedKey.size() - 1){
+                result = result + "<note>\n" + scripting(sortedKey.get(i), notation) + "</note>\n";
+            }
+            else{
+                result += "<note>\n" +
+                        "<chord/>\n";
+                result = result + scripting(sortedKey.get(i), notation) + "</note>\n";
+            }
         }
-        return 0;
+        return result;
     }
 
-    //I made only pitch part for now.
-    //reference: https://theacousticguitarist.com/all-notes-on-guitar/
-    //make script
-    public String pitchScript() {
+    //https://guitargearfinder.com/lessons/how-to-read-guitar-tab/
+    private static String scripting(int stringNumber, String notation){
+
+        String result = "";
+
+        if(Pattern.matches(("^[0-9]*$"), notation)){
+            int fretNum = Integer.parseInt(notation);
+            result += AcousticGuitarNote.pitchScript(octave(stringNumber, fretNum),key(stringNumber, fretNum));
+            result += "<duration>1</duration>\n" +
+                    "<voice>1</voice>\n" +
+                    "<type>16th</type>\n";
+            result += "<notations>\n" +
+                    "<technical>\n" +
+                    "<string>" + stringNumber + "</string>\n" +
+                    "<fret>" + fretNum + "</fret>\n" +
+                    "</technical>\n" +
+                    "</notations>\n";
+        }
+        else if(notation.equals("x") || notation.equals("X")){
+        }
+        else if(Pattern.matches(("^[[0-9]*[phPH][0-9]]*"), notation)){
+        }
+        else if(Pattern.matches(("^[[(][0-9]*[)]]"), notation)){
+        }
+        else{
+        }
+        return result;
+    }
+
+    private static String pitchScript(int octave, String key) {
+
         String octaveString = "<octave>" + octave + "</octave>\n";
         String stepString;
         if(!key.contains("#")) {
@@ -58,7 +91,6 @@ public abstract class Note implements ScoreComponent, Comparable {
                 + octaveString
                 + "</pitch>\n";
     }
-
 
     //decide octave of note
     private static int octave(int stringNumber, int fret) {
@@ -123,9 +155,9 @@ public abstract class Note implements ScoreComponent, Comparable {
         return octave;
     }
 
-    //decide key of note
-    public static String key(int stringNumber, int fret) {
+    private static String key(int stringNumber, int fret) {
         String[] keys = {"C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B"};
+
         if(stringNumber == 6) {
             return keys[(fret + 4) % 12];
         }
@@ -145,43 +177,4 @@ public abstract class Note implements ScoreComponent, Comparable {
             return keys[(fret + 4) % 12];
         }
     }
-
-    @Override
-    public boolean validate() {
-        return false;
-    }
-
-    public String toXML(boolean startsWithPrevious) {
-        StringBuilder noteXML = new StringBuilder();
-        noteXML.append("<note>\n");
-
-        if (startsWithPrevious)
-            noteXML.append("<chord/>\n");
-        noteXML.append(pitchScript());
-        noteXML.append("<duration>");
-        noteXML.append(this.duration);
-        noteXML.append("</duration>\n");
-
-        noteXML.append("</note>\n");
-
-        return noteXML.toString();
-    }
-
-    public void setTie() {
-        return;
-    }
-
-    @Override
-    public int compareTo(Object o) {
-        Note other = (Note) o;
-        return other.distanceToMeasureStart-this.distanceToMeasureStart;
-    }
-
-    //Creates a new arraylist of Note objects from stuff like 12h3 or (6\2) or (2)(7h1)
-    public static List<Note> from(String noteString, int distanceFromMeasureStart, String lineName) {
-        ArrayList<Note> noteList = new ArrayList<>();
-        noteList.add(new GuitarNote(lineName, Integer.valueOf(noteString), 1, distanceFromMeasureStart));
-        return noteList;
-    }
-
 }

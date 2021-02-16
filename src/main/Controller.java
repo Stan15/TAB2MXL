@@ -3,9 +3,9 @@ package main;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
-import parser.Parser;
 import javafx.fxml.FXML;
 import javafx.scene.control.TextArea;
+import parser.Parser;
 
 import java.io.File;
 import java.io.IOException;
@@ -27,7 +27,7 @@ public class Controller {
         fc.getExtensionFilters().add(extFilter);
 
 
-        File file = fc.showSaveDialog( (Stage) anchorPane.getScene().getWindow() );
+        File file = fc.showSaveDialog( anchorPane.getScene().getWindow() );
 
         if (file != null) {
             saveToFile(output, file);
