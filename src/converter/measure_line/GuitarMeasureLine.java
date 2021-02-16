@@ -1,46 +1,26 @@
 package converter.measure_line;
 
 import java.util.Arrays;
-import java.util.List;
-//wnduhwubwubeuwb
+import java.util.HashSet;
+import java.util.Set;
+
 public class GuitarMeasureLine extends MeasureLine {
-    public int beats;
-    public int beatType;
+    public static Set<String> NAME_SET = createLineNameSet();
+    public static String COMPONENT_PATTERN = createLineComponentPattern();
 
-    public GuitarMeasureLine(String line, int beats, int beatType) {
-        super(line);
-        this.beats = beats;
-        this.beatType = beatType;
+    public GuitarMeasureLine(String line, String name, int position) {
+        super(line, name, position);
     }
 
-    public static boolean isGuitar(String line) {
-        return true;
+    private static Set<String> createLineNameSet() {
+        String[] names = {"E", "A", "D", "G", "B", "e", "a", "d", "g", "b"};
+        HashSet<String> nameSet = new HashSet<>();
+        nameSet.addAll(Arrays.asList(names));
+        return nameSet;
     }
 
-    public static List<String> getLineNames() {
-        String[] guitarMeasureNames = {"E", "A", "D", "G", "B", "e", "a", "d", "g", "b"};
-        return Arrays.asList(guitarMeasureNames);
+    private static String createLineComponentPattern() {
+        return "[0-9]+|h|p|/|\\";
     }
 
-    /**
-     * TODO Validate that a given measure line string is a guitar measure line
-     * by ensuring that the string name belongs in the list of guitar measure line
-     * names only. If the measure line name belongs in both drums and guitar, you have to then
-     * check the measure components, or "notes" to make sure that it belongs to guitars
-     *
-     */
-    @Override
-    public boolean validate() {
-        //validate that the measure line components, or notes, are valid and as expected of a guitar measure line
-        return false;
-    }
-
-    public String toXML() {
-        
-        return null;
-    }
-
-    public static String getComponentPatterns() {
-        return "";
-    }
 }

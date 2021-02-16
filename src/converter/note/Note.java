@@ -1,26 +1,48 @@
-package converter;
+package converter.note;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
-public abstract class Note implements ScoreComponent, Comparable {
-    public int distanceToMeasureStart;
-    public static void main(String[] args) {
-        Note note = new GuitarNote("e", 13, 1, 5);
-        System.out.println(note.toXML(true));
-    }
-
+public class Note implements Comparable<Note>{
+    String line;
+    String name;
+    public int distance;
+    int position;
     private int octave;
     private String key;
-    private int duration;
+    public int duration;
     public int fret;
-    public Note(String lineName, int fret, int duration, int distanceToMeasureStart) {
-        this.fret = fret;
-        int stringNumber = this.convertNameToNumber(lineName);
+
+    public Note(String line, String name, int distanceFromMeasureStart, int position) {
+        this.line = line;
+        this.name = name;
+        this.position = position;
+        this.fret = Integer.parseInt(line);
+        int stringNumber = this.convertNameToNumber(this.name);
         this.octave = octave(stringNumber, fret);
         this.key = Note.key(stringNumber, fret);
-        this.duration = duration;
-        this.distanceToMeasureStart = distanceToMeasureStart;
+        this.duration = 1;
+        this.distance = distanceFromMeasureStart;
+    }
+
+    /**
+     * TODO REMOVE THE TRY CATCH AND HANDLE THIS PROPERLY
+     * @param line
+     * @param name
+     * @param distanceFromMeasureStart
+     * @param position
+     * @return
+     */
+    public static List<Note> from(String line, String name, int distanceFromMeasureStart, int position) {
+        List<Note> noteList = new ArrayList<>();
+        try {
+            noteList.add(new Note(line, name, distanceFromMeasureStart, position));
+        }catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return noteList;
     }
 
     public int convertNameToNumber(String lineName) {
@@ -148,11 +170,6 @@ public abstract class Note implements ScoreComponent, Comparable {
         }
     }
 
-    @Override
-    public boolean validate() {
-        return false;
-    }
-
     public String toXML(boolean startsWithPrevious) {
         StringBuilder noteXML = new StringBuilder();
         noteXML.append("<note>\n");
@@ -169,21 +186,8 @@ public abstract class Note implements ScoreComponent, Comparable {
         return noteXML.toString();
     }
 
-    public void setTie() {
-        return;
-    }
-
     @Override
-    public int compareTo(Object o) {
-        Note other = (Note) o;
-        return other.distanceToMeasureStart-this.distanceToMeasureStart;
+    public int compareTo(Note o) {
+        return this.distance-o.distance;
     }
-
-    //Creates a new arraylist of Note objects from stuff like 12h3 or (6\2) or (2)(7h1)
-    public static List<Note> from(String noteString, int distanceFromMeasureStart, String lineName) {
-        ArrayList<Note> noteList = new ArrayList<>();
-        noteList.add(new GuitarNote(lineName, Integer.valueOf(noteString), 1, distanceFromMeasureStart));
-        return noteList;
-    }
-
 }

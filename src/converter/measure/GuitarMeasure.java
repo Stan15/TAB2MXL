@@ -1,145 +1,59 @@
 package converter.measure;
 
-import converter.Note;
 import converter.measure_line.GuitarMeasureLine;
 import converter.measure_line.MeasureLine;
 
-import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
-import java.util.Locale;
-import java.util.PriorityQueue;
 
-public class GuitarMeasure extends Measure {
-    private List<MeasureLine> measureLines;
-    public int beats;
-    public int beatType;
-
-    private GuitarMeasure(List<String> lines, int startIdx, int  endIdx, String rootStr, boolean isFirstMeasure) {
-        super(lines, startIdx, endIdx, rootStr, isFirstMeasure);
-        this.beats = 4;
-        this.beatType = 4;
-        this.measureLines = this.getMeasureLines();
+public class GuitarMeasure extends Measure{
+    public GuitarMeasure(List<String> lines, List<String> lineNames, List<Integer> linePositions, boolean isFirstMeasure) {
+        super(lines, lineNames, linePositions, isFirstMeasure);
     }
 
-    public static GuitarMeasure getInstance(List<String> lines, int startIdx, int  endIdx, String rootStr, boolean isFirstMeasure) {
-        if (Measure.isGuitar(lines)) {
-            return new GuitarMeasure(lines, startIdx, endIdx, rootStr, isFirstMeasure);
-        }else {
-            return null;
-        }
-    }
-
+    /**
+     * Validates that all MeasureLine objects in this GuitarMeasure are GuitarMeasureLine objects, and validates its
+     * aggregate MeasureLine objects. It stops evaluation at the first aggregated object which fails validation.
+     * @return a HashMap<String, String> that maps the value "success" to "true" if validation is successful and "false"
+     * if not. If not successful, the HashMap also contains mappings "message" -> the error message, "priority" -> the
+     * priority level of the error, and "positions" -> the indices at which each line pertaining to the error can be
+     * found in the root string from which it was derived (i.e Score.ROOT_STRING).
+     * This value is formatted as such: "[startIndex,endIndex];[startIndex,endIndex];[startInde..."
+     */
     @Override
-    public boolean validate() {
-        //validate that each of the measure lines are valid and belong to a guitar,
-        // and that they are placed in the right order (e, B, G, D, A, E).
+    public HashMap<String, String> validate() {
+        //-----------------Validate yourself-------------------------
+        HashMap<String, String> superResult = super.validate(); //this validates if all MeasureLine objects in this measure are of the same type
+        if (superResult.get("success").equals("false"))
+            return superResult;
 
-        //check if in order or reverse order. If in reverse order, rearrange it. If not in order at all, it is an error
-        //that we prompt the user ot fix
-        for (int i=0; i<this.measureLines.size(); i++) {
-            if (true) {
-                continue;
-            }
+        HashMap<String, String> result = new HashMap<>();
+        //if we are here, all MeasureLine objects are of the same type. Now, all we need to do is check if they are actually guitar measures
+        if (!(this.measureLineList.get(0) instanceof GuitarMeasureLine)) {
+            result.put("success", "false");
+            result.put("message", "All measure lines in this measure must be Guitar measure lines.");
+            result.put("positions", this.getLinePositions());
+            result.put("priority", "1");
+            return result;
         }
-        MeasureLine prevMsurLine = null;
-        for (int i=0; i<this.measureLines.size(); i++) {
-            MeasureLine currMsurLine = this.measureLines.get(i);
-            String lineName = currMsurLine.getName();
-            if (prevMsurLine!=null && prevMsurLine.getName().toLowerCase()=="e" ) {
-                if (lineName=="B")
-                    prevMsurLine.setName("e");
-            }
+
+        if (this.measureLineList.size()!=6) {
+            result.put("success", "false");
+            result.put("message", "A guitar measure should have 6 lines.");
+            result.put("positions", this.getLinePositions());
+            result.put("priority", "2");
+            return result;
         }
-        return false;
-    }
 
-    @Override
-    public String toXML() {
-        Measure.measureNum++;
-        StringBuilder measureXML = new StringBuilder();
-        measureXML.append("<measure number=\""+Measure.measureNum+"\">\n");
-        // TODO much later on, check the notes in all the measure lines for notes with the same duration and make a chord out of them. then
-        if (this.isFirstMeasure)
-            this.addAttributesXML(measureXML);
-        this.addNotesXML(measureXML);
-        measureXML.append("</measure>\n");
-        return measureXML.toString();
-    }
 
-    private StringBuilder addAttributesXML(StringBuilder measureXML) {
-        measureXML.append("<attributes>\n");
-        measureXML.append("<divisions>");
-        measureXML.append(this.beatType/4);
-        measureXML.append("</divisions>\n");
-
-        measureXML.append("<key>\n");
-
-        measureXML.append("<fifths>");
-        measureXML.append(0);
-        measureXML.append("</fifths>\n");
-
-        measureXML.append("</key>\n");
-
-        measureXML.append("<time>\n");
-
-        measureXML.append("<beats>");
-        measureXML.append(this.beats);
-        measureXML.append("</beats>\n");
-
-        measureXML.append("<beat-type>");
-        measureXML.append(this.beatType);
-        measureXML.append("</beat-type>\n");
-
-        measureXML.append("</time>\n");
-
-        measureXML.append("<clef>\n");
-
-        measureXML.append("<sign>");
-        measureXML.append("G");
-        measureXML.append("</sign>\n");
-
-        measureXML.append("<line>");
-        measureXML.append(2);
-        measureXML.append("</line>\n");
-
-        measureXML.append("</clef>\n");
-
-        measureXML.append("</attributes>\n");
-        return measureXML;
-    }
-
-    private StringBuilder addNotesXML(StringBuilder measureXML) {
-        //remove all the other notes that make up the chord and place the chord in the appropriate location
-        PriorityQueue<Note> noteQueue = this.getNoteQueue();
-        while(!noteQueue.isEmpty()) {
-
-            //notes of the same distance from the start of their measure are a chord, and are collected in the below array
-            List<Note> currentChord = new ArrayList<Note>();
-            Note previousNote;
-            do {
-                Note note = noteQueue.poll();
-                currentChord.add(note);
-                previousNote = note;
-            }while(!noteQueue.isEmpty() && noteQueue.peek().distanceToMeasureStart==previousNote.distanceToMeasureStart);
-
-            //adding all chord notes to the measureXML
-            for(int i=0; i<currentChord.size(); i++) {
-                Note note = currentChord.get(i);
-                boolean startWithPrevious = false;
-                if (i>1)
-                    startWithPrevious = true;
-                measureXML.append(note.toXML(startWithPrevious));
-            }
+        //-----------------Validate Aggregates------------------
+        for (MeasureLine measureLine : this.measureLineList) {
+            HashMap<String,String> response = measureLine.validate();
+            if (response.get("success").equals("false"))
+                return response;
         }
-        return measureXML;
-    }
 
-    private PriorityQueue<Note> getNoteQueue() {
-        PriorityQueue<Note> noteQueue = new PriorityQueue<>();
-        for (MeasureLine line : this.measureLines) {
-            GuitarMeasureLine guitarMline = (GuitarMeasureLine) line;
-            noteQueue.addAll(guitarMline.notes);
-        }
-        return noteQueue;
+        result.put("success", "true");
+        return result;
     }
 }

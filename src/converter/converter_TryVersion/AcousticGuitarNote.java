@@ -1,7 +1,5 @@
 package converter.converter_TryVersion;
 
-import converter.Note;
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -12,25 +10,22 @@ public class AcousticGuitarNote{
 
     public static String makeNoteScript(int stringNumber, String notation){
 
-        String result = "<note>\n" + scripting(stringNumber, notation) + "</note>\n";
-
-        return result;
+        return "<note>\n" + scripting(stringNumber, notation) + "</note>\n";
     }
 
     public static String makeRestNoteScript(){
-        String result = "<note>\n" +
+        return "<note>\n" +
                 "<rest/>\n" +
                 "<duration>1</duration>\n" +
                 "<voice>1</voice>\n" +
                 "<type>16th</type>\n" +
                 "</note>\n";
-        return result;
     }
 
 
     public static String makeChordNoteScript(HashMap<Integer, String> notations){
 
-        Iterator iter = notations.keySet().iterator();
+        Iterator<Integer> iter = notations.keySet().iterator();
         ArrayList<Integer> sortedKey = new ArrayList<>(notations.keySet());
         Collections.sort(sortedKey);
 
@@ -55,7 +50,7 @@ public class AcousticGuitarNote{
         String result = "";
 
         if(Pattern.matches(("^[0-9]*$"), notation)){
-            int fretNum = Integer.valueOf(notation);
+            int fretNum = Integer.parseInt(notation);
             result += AcousticGuitarNote.pitchScript(octave(stringNumber, fretNum),key(stringNumber, fretNum));
             result += "<duration>1</duration>\n" +
                     "<voice>1</voice>\n" +
