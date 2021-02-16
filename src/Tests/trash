@@ -30,7 +30,7 @@ public class MeasureGroupTest {
     void testGetMeasuresLineOneEqual() {
         //testing if first line is as expected
         String[] expected = {"---1--5-", "--2--6-"};
-        for (int i=0; i<mGroup.measures.size(); i++) {
+        for (int i=0; i<mGroup.measureList.size(); i++) {
             Measure measure = mGroup.measures.get(i);
             assertEquals(measure.measureLines.get(1).Line, expected[i]);
         }
